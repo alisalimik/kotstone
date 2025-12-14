@@ -1,0 +1,19 @@
+package ca.moheektech.capstone.exp.aarch64
+
+import ca.moheektech.capstone.internal.*
+import ca.moheektech.capstone.exp.INumericEnum
+
+actual enum class AArch64SvePrfm(override val value: UInt): INumericEnum {
+
+    // generated content <AArch64GenCSSystemOperandsEnum.inc:GET_ENUM_VALUES_SVEPRFM> begin
+    // clang-format off
+    PLDL1KEEP(AARCH64_SVEPRFM_PLDL1KEEP), PLDL1STRM(AARCH64_SVEPRFM_PLDL1STRM), PLDL2KEEP(AARCH64_SVEPRFM_PLDL2KEEP), PLDL2STRM(AARCH64_SVEPRFM_PLDL2STRM),
+    PLDL3KEEP(AARCH64_SVEPRFM_PLDL3KEEP), PLDL3STRM(AARCH64_SVEPRFM_PLDL3STRM), PSTL1KEEP(AARCH64_SVEPRFM_PSTL1KEEP), PSTL1STRM(AARCH64_SVEPRFM_PSTL1STRM),
+    PSTL2KEEP(AARCH64_SVEPRFM_PSTL2KEEP), PSTL2STRM(AARCH64_SVEPRFM_PSTL2STRM), PSTL3KEEP(AARCH64_SVEPRFM_PSTL3KEEP), PSTL3STRM(AARCH64_SVEPRFM_PSTL3STRM),
+
+    // clang-format on
+    // generated content <AArch64GenCSSystemOperandsEnum.inc:GET_ENUM_VALUES_SVEPRFM> end
+    ENDING(AARCH64_SVEPRFM_ENDING),
+
+}
+

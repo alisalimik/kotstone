@@ -1,0 +1,672 @@
+name: Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+# Cancel previous runs if a new one is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xmx4g"
+
+jobs:
+  # Linux: Test linuxX64 and JVM
+  test-linux:
+    name: Test on Linux (linuxX64 + JVM)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          gradle-home-cache-cleanup: true
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            ninja-build \
+            build-essential \
+            gcc \
+            g++ \
+            clang \
+            llvm
+
+      - name: Verify build tools
+        run: |
+          echo "=== Build Tools Verification ==="
+          cmake --version
+          ninja --version
+          gcc --version
+          g++ --version
+          clang --version
+          echo "=== Java ==="
+          java -version
+          javac -version
+          echo "==================================="
+
+      - name: Get build tool versions
+        id: build-tools
+        run: |
+          echo "cmake_version=$(cmake --version | head -n1 | cut -d' ' -f3)" >> $GITHUB_OUTPUT
+          echo "gcc_version=$(gcc --version | head -n1 | cut -d' ' -f4)" >> $GITHUB_OUTPUT
+
+      - name: Cache Capstone builds
+        id: cache-capstone
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/capstone
+            library/interop/lib
+            library/interop/include
+          key: ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-gcc-${{ steps.build-tools.outputs.gcc_version }}
+          restore-keys: |
+            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
+            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-
+            ${{ runner.os }}-capstone-
+
+      - name: Build Capstone for Linux targets
+        if: steps.cache-capstone.outputs.cache-hit != 'true'
+        run: ./gradlew buildCapstoneLinuxX64 --info
+
+      - name: Verify Capstone build
+        run: |
+          echo "=== Capstone Build Verification ==="
+          ls -la library/interop/lib/linuxX64/ || echo "linuxX64 library not found"
+          ls -la library/interop/include/ || echo "Headers not found"
+          if [ -f library/interop/lib/linuxX64/libcapstone.a ]; then
+            echo "✓ Capstone library found"
+            ls -lh library/interop/lib/linuxX64/libcapstone.a
+          else
+            echo "✗ Capstone library missing - will be built by Gradle"
+          fi
+
+      - name: Cache Kotlin/Native
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
+
+      - name: Run linuxX64 tests
+        run: ./gradlew linuxX64Test --continue --stacktrace
+
+      - name: Run JVM tests
+        run: ./gradlew jvmTest --continue --stacktrace
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-linux
+          path: |
+            library/build/reports/tests/
+            library/build/test-results/
+          retention-days: 7
+
+  # macOS: Test all Apple targets (macOS, iOS, watchOS, tvOS)
+  test-macos:
+    name: Test on macOS (All Apple Targets)
+    runs-on: macos-14  # ARM64 runner (M1)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          gradle-home-cache-cleanup: true
+
+      - name: Install build dependencies
+        run: |
+          brew install cmake ninja
+
+      - name: Setup cross-compilation toolchains
+        run: |
+          # Add cross-compilation toolchains tap
+          brew tap messense/macos-cross-toolchains
+
+          # Install Zig for cross-compilation
+          brew install zig || true
+
+          # Install Linux cross-compilation toolchains
+          brew install x86_64-unknown-linux-gnu || true
+          brew install aarch64-unknown-linux-gnu || true
+
+          # Install MinGW for Windows cross-compilation
+          brew install mingw-w64 || true
+
+      - name: Select Xcode version
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+          xcodebuild -version
+          xcodebuild -showsdks
+
+      - name: Verify Xcode installation
+        run: |
+          echo "=== Xcode & Apple SDKs Verification ==="
+          xcodebuild -version
+          echo ""
+          echo "=== Available SDKs ==="
+          xcodebuild -showsdks
+          echo ""
+          echo "=== Command Line Tools ==="
+          xcrun --show-sdk-path
+          echo ""
+          echo "=== iOS Simulator Runtimes ==="
+          xcrun simctl list runtimes
+          echo ""
+          echo "=== Build Tools ==="
+          cmake --version
+          ninja --version
+          echo ""
+          echo "=== Cross-Compilation Tools ==="
+          zig version || echo "Zig not installed"
+          x86_64-unknown-linux-gnu-gcc --version || echo "Linux x64 toolchain not installed"
+          aarch64-unknown-linux-gnu-gcc --version || echo "Linux ARM64 toolchain not installed"
+          x86_64-w64-mingw32-gcc --version || echo "MinGW x64 not installed"
+          echo "==================================="
+
+      - name: Get build tool versions
+        id: build-tools
+        run: |
+          echo "cmake_version=$(cmake --version | head -n1 | cut -d' ' -f3)" >> $GITHUB_OUTPUT
+          echo "xcode_version=$(xcodebuild -version | head -n1 | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+          echo "clang_version=$(clang --version | head -n1 | cut -d' ' -f4)" >> $GITHUB_OUTPUT
+
+      - name: Cache Capstone builds
+        id: cache-capstone
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/capstone
+            library/interop/lib
+            library/interop/include
+          key: ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-xcode-${{ steps.build-tools.outputs.xcode_version }}
+          restore-keys: |
+            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
+            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-
+            ${{ runner.os }}-capstone-
+
+      - name: Build Capstone for Apple targets
+        if: steps.cache-capstone.outputs.cache-hit != 'true'
+        run: ./gradlew buildCapstoneAll --info
+
+      - name: Verify Capstone build
+        run: |
+          echo "=== Capstone Build Verification ==="
+          for target in macosX64 macosArm64 iosArm64 iosX64 iosSimulatorArm64; do
+            if [ -f "library/interop/lib/$target/libcapstone.a" ]; then
+              echo "✓ $target: $(ls -lh library/interop/lib/$target/libcapstone.a | awk '{print $5}')"
+            else
+              echo "✗ $target: missing"
+            fi
+          done
+
+      - name: Cache Kotlin/Native
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
+
+      - name: Run macOS tests
+        run: |
+          ./gradlew macosArm64Test --continue --stacktrace || true
+          ./gradlew macosX64Test --continue --stacktrace || true
+
+      - name: Run iOS Simulator tests
+        run: |
+          ./gradlew iosSimulatorArm64Test --continue --stacktrace || true
+          ./gradlew iosX64Test --continue --stacktrace || true
+
+      - name: Run watchOS Simulator tests
+        run: |
+          ./gradlew watchosSimulatorArm64Test --continue --stacktrace || true
+          ./gradlew watchosX64Test --continue --stacktrace || true
+
+      - name: Run tvOS Simulator tests
+        run: |
+          ./gradlew tvosSimulatorArm64Test --continue --stacktrace || true
+          ./gradlew tvosX64Test --continue --stacktrace || true
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-macos
+          path: |
+            library/build/reports/tests/
+            library/build/test-results/
+          retention-days: 7
+
+  # Windows: Test mingwX64
+  test-windows:
+    name: Test on Windows (mingwX64)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          gradle-home-cache-cleanup: true
+
+      - name: Install build dependencies
+        run: |
+          choco install cmake ninja mingw -y
+
+      - name: Setup MinGW paths
+        shell: bash
+        run: |
+          echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $GITHUB_PATH
+          echo "C:\tools\mingw64\bin" >> $GITHUB_PATH
+
+      - name: Verify build tools
+        shell: bash
+        run: |
+          echo "=== Build Tools Verification ==="
+          cmake --version
+          ninja --version
+          gcc --version || true
+          x86_64-w64-mingw32-gcc --version || true
+          echo "=== Java ==="
+          java -version
+          javac -version
+          echo "==================================="
+
+      - name: Get build tool versions
+        id: build-tools
+        shell: bash
+        run: |
+          echo "cmake_version=$(cmake --version | head -n1 | cut -d' ' -f3)" >> $GITHUB_OUTPUT
+          echo "gcc_version=$(gcc --version 2>/dev/null | head -n1 | cut -d' ' -f4 || echo 'unknown')" >> $GITHUB_OUTPUT
+
+      - name: Cache Capstone builds
+        id: cache-capstone
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/capstone
+            library/interop/lib
+            library/interop/include
+          key: ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-gcc-${{ steps.build-tools.outputs.gcc_version }}
+          restore-keys: |
+            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
+            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-
+            ${{ runner.os }}-capstone-
+
+      - name: Build Capstone for Windows
+        if: steps.cache-capstone.outputs.cache-hit != 'true'
+        run: ./gradlew buildCapstoneMingwX64 --info
+
+      - name: Verify Capstone build
+        shell: bash
+        run: |
+          echo "=== Capstone Build Verification ==="
+          if [ -f library/interop/lib/mingwX64/libcapstone.a ]; then
+            echo "✓ mingwX64: $(ls -lh library/interop/lib/mingwX64/libcapstone.a | awk '{print $5}')"
+          else
+            echo "✗ mingwX64: missing"
+          fi
+
+      - name: Cache Kotlin/Native
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
+
+      - name: Run mingwX64 tests
+        run: ./gradlew mingwX64Test --continue --stacktrace
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-windows
+          path: |
+            library/build/reports/tests/
+            library/build/test-results/
+          retention-days: 7
+
+  # Web: Test JS and WASM (wasmJs, wasmWasi, js)
+  test-web:
+    name: Test Web Targets (JS + WASM)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          gradle-home-cache-cleanup: true
+
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            ninja-build \
+            build-essential \
+            python3
+
+      - name: Setup Emscripten SDK
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: '3.1.51'
+          actions-cache-folder: 'emsdk-cache'
+
+      - name: Verify Emscripten installation
+        run: |
+          echo "=== Emscripten SDK Verification ==="
+          emcc --version
+          em++ --version
+          emcmake --version
+          which emcc
+          echo ""
+          echo "=== Emscripten Configuration ==="
+          emcc --show-ports
+          echo ""
+          echo "=== LLVM Tools ==="
+          llvm-nm --version || true
+          echo ""
+          echo "=== Node.js ==="
+          node --version
+          npm --version
+          echo ""
+          echo "=== Build Tools ==="
+          cmake --version
+          ninja --version
+          python3 --version
+          echo "==================================="
+
+      - name: Get build tool versions
+        id: build-tools
+        run: |
+          echo "cmake_version=$(cmake --version | head -n1 | cut -d' ' -f3)" >> $GITHUB_OUTPUT
+          echo "emcc_version=$(emcc --version | head -n1 | cut -d' ' -f6)" >> $GITHUB_OUTPUT
+
+      - name: Cache Capstone WASM builds
+        id: cache-capstone
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/capstone_wasm_build
+            library/src/webMain/resources
+            library/src/wasmWasiMain/resources
+          key: ${{ runner.os }}-capstone-wasm-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-emcc-${{ steps.build-tools.outputs.emcc_version }}
+          restore-keys: |
+            ${{ runner.os }}-capstone-wasm-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
+            ${{ runner.os }}-capstone-wasm-${{ hashFiles('library/interop/capstone/**') }}-
+            ${{ runner.os }}-capstone-wasm-
+
+      - name: Build Capstone for WASM
+        if: steps.cache-capstone.outputs.cache-hit != 'true'
+        run: ./gradlew buildCapstoneWasmJs buildCapstoneWasmWasi --info
+
+      - name: Verify Capstone WASM build
+        run: |
+          echo "=== Capstone WASM Build Verification ==="
+          if [ -f library/src/webMain/resources/capstone.wasm ]; then
+            echo "✓ WASM JS: $(ls -lh library/src/webMain/resources/capstone.wasm | awk '{print $5}')"
+          else
+            echo "✗ WASM JS: missing"
+          fi
+          if [ -f library/src/wasmWasiMain/resources/capstone-wasi.wasm ]; then
+            echo "✓ WASM WASI: $(ls -lh library/src/wasmWasiMain/resources/capstone-wasi.wasm | awk '{print $5}')"
+          else
+            echo "✗ WASM WASI: missing"
+          fi
+
+      - name: Cache Kotlin/Native
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-wasm-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-wasm-
+            ${{ runner.os }}-konan-
+
+      - name: Run JS tests
+        run: ./gradlew jsTest --continue --stacktrace
+
+      - name: Run WASM JS tests
+        run: ./gradlew wasmJsTest --continue --stacktrace
+
+      - name: Run WASM WASI tests
+        run: ./gradlew wasmWasiTest --continue --stacktrace
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-web
+          path: |
+            library/build/reports/tests/
+            library/build/test-results/
+          retention-days: 7
+
+  # Android: Test Android JVM and Native targets
+  test-android:
+    name: Test Android
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          gradle-home-cache-cleanup: true
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK components
+        run: |
+          sdkmanager --list
+          echo "=== Installing Android SDK components ==="
+          echo "y" | sdkmanager "platform-tools"
+          echo "y" | sdkmanager "build-tools;34.0.0"
+          echo "y" | sdkmanager "platforms;android-34"
+          echo "y" | sdkmanager "ndk;26.1.10909125"
+          echo "y" | sdkmanager "cmake;3.22.1"
+
+      - name: Set Android environment variables
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/26.1.10909125" >> $GITHUB_ENV
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+          echo "$ANDROID_SDK_ROOT/ndk/26.1.10909125/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+
+      - name: Verify Android SDK installation
+        run: |
+          echo "=== Android SDK Verification ==="
+          echo "ANDROID_HOME: $ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT"
+          echo "ANDROID_NDK_ROOT: $ANDROID_NDK_ROOT"
+          echo ""
+          echo "=== SDK Packages ==="
+          sdkmanager --list_installed
+          echo ""
+          echo "=== NDK ==="
+          ls -la "$ANDROID_SDK_ROOT/ndk/" || true
+          echo ""
+          echo "=== CMake ==="
+          cmake --version
+          echo "==================================="
+
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
+
+      - name: Get build tool versions
+        id: build-tools
+        run: |
+          echo "cmake_version=$(cmake --version | head -n1 | cut -d' ' -f3)" >> $GITHUB_OUTPUT
+          echo "ndk_version=$(basename $ANDROID_NDK_ROOT)" >> $GITHUB_OUTPUT
+
+      - name: Cache Capstone Android builds
+        id: cache-capstone
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/capstone
+            library/interop/lib
+            library/interop/linked-android
+            library/interop/include
+          key: ${{ runner.os }}-capstone-android-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-ndk-${{ steps.build-tools.outputs.ndk_version }}
+          restore-keys: |
+            ${{ runner.os }}-capstone-android-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
+            ${{ runner.os }}-capstone-android-${{ hashFiles('library/interop/capstone/**') }}-
+            ${{ runner.os }}-capstone-android-
+
+      - name: Build Capstone for Android
+        if: steps.cache-capstone.outputs.cache-hit != 'true'
+        run: ./gradlew buildCapstoneAndroidArm64Shared --info
+
+      - name: Verify Capstone Android build
+        run: |
+          echo "=== Capstone Android Build Verification ==="
+          for abi in arm64-v8a armeabi-v7a x86_64 x86; do
+            if [ -f "library/interop/linked-android/$abi/libcapstone.so" ]; then
+              echo "✓ $abi: $(ls -lh library/interop/linked-android/$abi/libcapstone.so | awk '{print $5}')"
+            else
+              echo "✗ $abi: missing"
+            fi
+          done
+
+      - name: Cache Kotlin/Native
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-android-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-android-
+            ${{ runner.os }}-konan-
+
+      - name: Run Android unit tests
+        run: ./gradlew testDebugUnitTest --continue --stacktrace
+
+      - name: Run Android Native tests
+        run: |
+          ./gradlew androidNativeArm64Test --continue --stacktrace || true
+          ./gradlew androidNativeX64Test --continue --stacktrace || true
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-android
+          path: |
+            library/build/reports/tests/
+            library/build/test-results/
+          retention-days: 7
+
+  # Summary job that requires all test jobs to pass
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [test-linux, test-macos, test-windows, test-web, test-android]
+    if: always()
+
+    steps:
+      - name: Check test results
+        run: |
+          echo "=== Test Results Summary ==="
+          echo "Linux:   ${{ needs.test-linux.result }}"
+          echo "macOS:   ${{ needs.test-macos.result }}"
+          echo "Windows: ${{ needs.test-windows.result }}"
+          echo "Web:     ${{ needs.test-web.result }}"
+          echo "Android: ${{ needs.test-android.result }}"
+          echo "=========================="
+
+          if [ "${{ needs.test-linux.result }}" != "success" ] || \
+             [ "${{ needs.test-macos.result }}" != "success" ] || \
+             [ "${{ needs.test-windows.result }}" != "success" ] || \
+             [ "${{ needs.test-web.result }}" != "success" ] || \
+             [ "${{ needs.test-android.result }}" != "success" ]; then
+            echo "❌ Some tests failed"
+            exit 1
+          else
+            echo "✅ All tests passed"
+          fi

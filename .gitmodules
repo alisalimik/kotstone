@@ -1,0 +1,3 @@
+[submodule "library/interop/capstone"]
+	path = library/interop/capstone
+	url = https://github.com/capstone-engine/capstone.git
