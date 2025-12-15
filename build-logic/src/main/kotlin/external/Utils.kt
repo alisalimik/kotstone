@@ -1,47 +1,43 @@
-package config
+package external
 
+import external.tasks.BuildAllCapstoneTask
+import external.tasks.BuildCapstoneTask
 import org.gradle.api.Action
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import java.io.File
 
-/**
- * Task to build Capstone for a specific target
- */
-abstract class BuildCapstoneTask : DefaultTask() {
-    @get:Input
-    var targetName: String = ""
-
-    @TaskAction
-    fun buildCapstone() {
-        // Pass project explicitly
-        buildCapstoneForTarget(project, targetName)
-    }
+internal fun createException(message: String): RuntimeException {
+    return RuntimeException(message)
 }
 
-/**
- * Task to build Capstone for all native targets
- */
-abstract class BuildAllCapstoneTask : DefaultTask() {
-
-    @TaskAction
-    fun buildAllCapstone() {
-        val kotlin = project.extensions.findByType(KotlinMultiplatformExtension::class.java)
-        if (kotlin == null) {
-            project.logger.warn("KotlinMultiplatformExtension not found, skipping Capstone build")
-            return
-        }
-
-        val nativeTargets = kotlin.targets.filterIsInstance<KotlinNativeTarget>()
-
-        // Pass project explicitly
-        buildCapstoneForAllTargets(project, nativeTargets)
+internal fun getZigToolchainFile(project: Project): File {
+    val toolchainFile = File(project.layout.buildDirectory.get().asFile, "toolchains/zig-toolchain.cmake")
+    if (!toolchainFile.exists()) {
+        toolchainFile.parentFile.mkdirs()
+        toolchainFile.writeText("""
+            set(CMAKE_C_COMPILER "zig")
+            set(CMAKE_CXX_COMPILER "zig")
+            set(CMAKE_C_COMPILER_ARG1 "cc")
+            set(CMAKE_CXX_COMPILER_ARG1 "c++")
+            set(CMAKE_AR "zig" CACHE STRING "" FORCE)
+            set(CMAKE_RANLIB "zig" CACHE STRING "" FORCE)
+            set(CMAKE_C_COMPILER_AR "zig" CACHE STRING "" FORCE)
+            set(CMAKE_CXX_COMPILER_AR "zig" CACHE STRING "" FORCE)
+            
+            # Fix for Zig + Ninja/Make dependency file issue by suppressing the flags
+            set(CMAKE_DEPFILE_FLAGS_C "" CACHE STRING "" FORCE)
+            set(CMAKE_DEPFILE_FLAGS_CXX "" CACHE STRING "" FORCE)
+            set(CMAKE_C_LINK_DEPENDS_USE_COMPILER FALSE CACHE BOOL "" FORCE)
+            set(CMAKE_CXX_LINK_DEPENDS_USE_COMPILER FALSE CACHE BOOL "" FORCE)
+            set(CMAKE_LINK_DEPENDS_NO_SHARED ON CACHE BOOL "" FORCE)
+        """.trimIndent())
     }
+    return toolchainFile
 }
+
 
 /**
  * Registers Capstone build tasks for the project

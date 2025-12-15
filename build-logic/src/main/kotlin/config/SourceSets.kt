@@ -22,7 +22,6 @@ fun KotlinMultiplatformExtension.configureSourceSets() {
         }
     }
 
-    // Apply common opt-ins to ALL source sets
     sourceSets.all {
         commonOptIns()
     }

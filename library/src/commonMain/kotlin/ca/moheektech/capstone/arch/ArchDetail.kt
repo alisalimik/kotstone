@@ -20,29 +20,29 @@ package ca.moheektech.capstone.arch
  * ```
  */
 sealed class ArchDetail {
-    /** AArch64 (ARM64) specific details */
-    data class AArch64(val detail: AArch64InstructionDetail) : ArchDetail()
+  /** AArch64 (ARM64) specific details */
+  data class AArch64(val detail: AArch64InstructionDetail) : ArchDetail()
 
-    /** X86/X86-64 specific details */
-    data class X86(val detail: X86InstructionDetail) : ArchDetail()
+  /** X86/X86-64 specific details */
+  data class X86(val detail: X86InstructionDetail) : ArchDetail()
 
-    /** ARM (32-bit) specific details */
-    data class ARM(val detail: ArmInstructionDetail) : ArchDetail()
+  /** ARM (32-bit) specific details */
+  data class ARM(val detail: ArmInstructionDetail) : ArchDetail()
 
-    /** MIPS specific details */
-    data class MIPS(val detail: GenericDetail) : ArchDetail()
+  /** MIPS specific details */
+  data class MIPS(val detail: GenericDetail) : ArchDetail()
 
-    /** PowerPC specific details */
-    data class PPC(val detail: GenericDetail) : ArchDetail()
+  /** PowerPC specific details */
+  data class PPC(val detail: GenericDetail) : ArchDetail()
 
-    /** SPARC specific details */
-    data class SPARC(val detail: GenericDetail) : ArchDetail()
+  /** SPARC specific details */
+  data class SPARC(val detail: GenericDetail) : ArchDetail()
 
-    /** SystemZ specific details */
-    data class SystemZ(val detail: GenericDetail) : ArchDetail()
+  /** SystemZ specific details */
+  data class SystemZ(val detail: GenericDetail) : ArchDetail()
 
-    /** Generic/unknown architecture details */
-    data class Generic(val detail: GenericDetail) : ArchDetail()
+  /** Generic/unknown architecture details */
+  data class Generic(val detail: GenericDetail) : ArchDetail()
 }
 
 /**
@@ -57,9 +57,5 @@ sealed class ArchDetail {
  */
 inline fun <reified T : ArchDetail> ArchDetail.asType(): T? = this as? T
 
-/**
- * Generic architecture detail placeholder for architectures without specialized support.
- */
-data class GenericDetail(
-    val raw: String = ""
-)
+/** Generic architecture detail placeholder for architectures without specialized support. */
+data class GenericDetail(val raw: String = "")

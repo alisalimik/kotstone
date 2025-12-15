@@ -1,9 +1,9 @@
 package ca.moheektech.capstone.exp
 
 internal actual interface INumericEnum {
-    val value: UInt
+  val value: UInt
 
-    actual fun toInt(): Int {
-        return value.toInt()
-    }
+  actual fun toInt(): Int {
+    return value.toInt()
+  }
 }

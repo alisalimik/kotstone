@@ -6,10 +6,9 @@ import config.createCInterop
 import config.patchCinteropConfigCache
 import config.patchTestTask
 import config.patchWASITestRunner
-import config.registerCapstoneBuildTasks
+import external.registerCapstoneBuildTasks
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class KapstoneProjectPlugin : Plugin<Project> {
@@ -23,7 +22,7 @@ class KapstoneProjectPlugin : Plugin<Project> {
         plugins.withId("com.android.library") {
             extensions.configure(KotlinMultiplatformExtension::class.java) {
                 configureArgs()
-                configureTargets(project)
+                configureTargets()
                 createCInterop()
                 configureSourceSets()
             }

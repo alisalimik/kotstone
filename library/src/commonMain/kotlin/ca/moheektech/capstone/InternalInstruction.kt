@@ -4,8 +4,8 @@ import ca.moheektech.capstone.enums.InstructionGroup
 import ca.moheektech.capstone.model.InstructionDetail
 
 /**
- * Internal/Generic instruction implementation.
- * Used for generic decomposition or when architecture details are not fully reified.
+ * Internal/Generic instruction implementation. Used for generic decomposition or when architecture
+ * details are not fully reified.
  */
 data class InternalInstruction(
     override val id: Int,
@@ -17,9 +17,8 @@ data class InternalInstruction(
     val detail: InstructionDetail? = null
 ) : Instruction {
 
-    override fun isInGroup(group: InstructionGroup): Boolean =
-        detail?.isInGroup(group) == true
+  override fun isInGroup(group: InstructionGroup): Boolean = detail?.isInGroup(group) == true
 
-    override fun toString(): String =
-        "0x${address.toString(16)}: $mnemonic${if (opStr.isNotEmpty()) " $opStr" else ""}"
+  override fun toString(): String =
+      "0x${address.toString(16)}: $mnemonic${if (opStr.isNotEmpty()) " $opStr" else ""}"
 }

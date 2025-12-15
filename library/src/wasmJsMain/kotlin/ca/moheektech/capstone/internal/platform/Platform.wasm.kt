@@ -7,15 +7,17 @@ import kotlin.js.JsNumber
 import kotlin.js.Promise
 
 internal actual suspend fun loadCapstoneModule(): Promise<CapstoneModuleInstance> {
-    println("DEBUG: loadCapstoneModule called")
-    ensureCapstoneLoaded()
-    println("DEBUG: ensureCapstoneLoaded returned")
-    val res = capstoneModule()
-    println("DEBUG: capstoneModule() returned: " + res)
-    return res
+  println("DEBUG: loadCapstoneModule called")
+  ensureCapstoneLoaded()
+  println("DEBUG: ensureCapstoneLoaded returned")
+  val res = capstoneModule()
+  println("DEBUG: capstoneModule() returned: " + res)
+  return res
 }
 
-private fun ensureCapstoneLoaded(): Unit = js("""{
+private fun ensureCapstoneLoaded(): Unit =
+    js(
+        """{
     console.log("DEBUG: inside ensureCapstoneLoaded JS");
     if (typeof CapstoneModule === 'undefined') {
         console.log("DEBUG: CapstoneModule is undefined, trying require");
@@ -39,12 +41,12 @@ private fun ensureCapstoneLoaded(): Unit = js("""{
 }""")
 
 internal actual fun ByteArray.asJsInt8Array(): JsAny {
-    val size = this.size
-    val array = createInt8Array(size)
-    for (i in indices) {
-        setArrayValue(array, i, this[i])
-    }
-    return array
+  val size = this.size
+  val array = createInt8Array(size)
+  for (i in indices) {
+    setArrayValue(array, i, this[i])
+  }
+  return array
 }
 
 // Correct usage: js(...) as the single expression of the function

@@ -21,27 +21,16 @@ data class InstructionDetail(
     val writeback: Boolean = false,
     val archDetail: ArchDetail? = null
 ) {
-    /**
-     * Check if this instruction belongs to a specific group
-     */
-    fun isInGroup(group: InstructionGroup): Boolean =
-        groups.contains(group)
+  /** Check if this instruction belongs to a specific group */
+  fun isInGroup(group: InstructionGroup): Boolean = groups.contains(group)
 
-    /**
-     * Check if instruction reads a specific register
-     */
-    fun readsRegister(regId: Int): Boolean =
-        regsRead.any { it.id == regId }
+  /** Check if instruction reads a specific register */
+  fun readsRegister(regId: Int): Boolean = regsRead.any { it.id == regId }
 
-    /**
-     * Check if instruction writes a specific register
-     */
-    fun writesRegister(regId: Int): Boolean =
-        regsWritten.any { it.id == regId }
+  /** Check if instruction writes a specific register */
+  fun writesRegister(regId: Int): Boolean = regsWritten.any { it.id == regId }
 
-    /**
-     * Get all registers accessed (read or written)
-     */
-    val allRegisters: List<Register>
-        get() = (regsRead + regsWritten).distinct()
+  /** Get all registers accessed (read or written) */
+  val allRegisters: List<Register>
+    get() = (regsRead + regsWritten).distinct()
 }

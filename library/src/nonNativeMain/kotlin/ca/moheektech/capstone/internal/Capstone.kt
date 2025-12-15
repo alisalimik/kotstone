@@ -65,14 +65,14 @@ internal const val CS_ERR_MODE: Int = 5 // Invalid/unsupported mode
 internal const val CS_ERR_OPTION: Int = 6 // Invalid/unsupported option: cs_option()
 internal const val CS_ERR_DETAIL: Int = 7 // Invalid/unsupported option: cs_option()
 internal const val CS_ERR_MEMSETUP: Int = 8
-internal const val CS_ERR_VERSION: Int = 9 //Unsupported version (bindings)
-internal const val CS_ERR_DIET: Int = 10 //Information irrelevant in diet engine
+internal const val CS_ERR_VERSION: Int = 9 // Unsupported version (bindings)
+internal const val CS_ERR_DIET: Int = 10 // Information irrelevant in diet engine
 internal const val CS_ERR_SKIPDATA: Int =
-    11 //Access irrelevant data for "data" instruction in SKIPDATA mode
+    11 // Access irrelevant data for "data" instruction in SKIPDATA mode
 internal const val CS_ERR_X86_ATT: Int =
-    12 //X86 AT&T syntax is unsupported (opt-out at compile time)
+    12 // X86 AT&T syntax is unsupported (opt-out at compile time)
 internal const val CS_ERR_X86_INTEL: Int =
-    13 //X86 Intel syntax is unsupported (opt-out at compile time)
+    13 // X86 Intel syntax is unsupported (opt-out at compile time)
 
 // Capstone option type
 internal const val CS_OPT_SYNTAX: Int = 1 // Intel X86 asm syntax (CS_ARCH_X86 arch)

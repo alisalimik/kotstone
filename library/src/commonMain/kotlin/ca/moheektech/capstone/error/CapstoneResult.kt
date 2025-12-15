@@ -29,27 +29,19 @@ typealias CapstoneResult<T> = Result<T>
  * ```
  */
 fun <T> CapstoneResult<T>.getOrThrow(): T = getOrElse { error ->
-    throw when (error) {
-        is CapstoneError -> error
-        else -> CapstoneError.Unknown(-1, error.message ?: "Unknown error")
-    }
+  throw when (error) {
+    is CapstoneError -> error
+    else -> CapstoneError.Unknown(-1, error.message ?: "Unknown error")
+  }
 }
 
-/**
- * Create a successful CapstoneResult
- */
-fun <T> CapstoneResult<T>.success(value: T): CapstoneResult<T> =
-    Result.success(value)
+/** Create a successful CapstoneResult */
+fun <T> CapstoneResult<T>.success(value: T): CapstoneResult<T> = Result.success(value)
 
-/**
- * Create a failed CapstoneResult with CapstoneError
- */
-fun <T> CapstoneResult<T>.failure(error: CapstoneError): CapstoneResult<T> =
-    Result.failure(error)
+/** Create a failed CapstoneResult with CapstoneError */
+fun <T> CapstoneResult<T>.failure(error: CapstoneError): CapstoneResult<T> = Result.failure(error)
 
-/**
- * Create a failed CapstoneResult from ErrorCode
- */
+/** Create a failed CapstoneResult from ErrorCode */
 fun <T> CapstoneResult<T>.failure(
     errorCode: ErrorCode,
     arch: Architecture = Architecture.ARM,

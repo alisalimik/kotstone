@@ -5,22 +5,26 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import platform.Host
 import platform.toolchains
 
-fun KotlinMultiplatformExtension.configureTargets(project: Project) {
+context(project: Project)
+fun KotlinMultiplatformExtension.configureTargets() {
     jvm()
     androidTarget()
 
-    // JS / WASM
     js(IR) {
+        outputModuleName.set("capstone-kt")
         nodejs()
         browser()
         compilerOptions {
-            freeCompilerArgs.addAll("-Xes-long-as-bigint", "-XXLanguage:+JsAllowLongInExportedDeclarations")
+            freeCompilerArgs.add("-Xes-long-as-bigint")
+            freeCompilerArgs.add("-XXLanguage:+JsAllowLongInExportedDeclarations")
         }
         binaries.library()
     }
 
     wasmJs {
+        outputModuleName.set("capstone-kt")
         nodejs()
+        browser()
         binaries.library()
     }
 
@@ -48,12 +52,10 @@ fun KotlinMultiplatformExtension.configureTargets(project: Project) {
     linuxX64()
     linuxArm64()
 
-    // Windows - use configuration cache-compatible toolchain detection
     if (project.toolchains.mingwX64.get()) {
         mingwX64()
     }
 
-    // Android Native
     androidNativeArm64()
     androidNativeArm32()
     androidNativeX64()

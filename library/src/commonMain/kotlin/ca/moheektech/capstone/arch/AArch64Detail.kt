@@ -1,8 +1,8 @@
 package ca.moheektech.capstone.arch
 
 import ca.moheektech.capstone.enums.AccessType
-import ca.moheektech.capstone.model.Register
 import ca.moheektech.capstone.exp.aarch64.*
+import ca.moheektech.capstone.model.Register
 
 /**
  * AArch64 (ARM64) instruction details.
@@ -21,9 +21,7 @@ data class AArch64InstructionDetail(
     val operands: List<AArch64Operand> = emptyList()
 )
 
-/**
- * AArch64 instruction operand.
- */
+/** AArch64 instruction operand. */
 data class AArch64Operand(
     val type: AArch64OpType,
     val access: AccessType = AccessType.INVALID,
@@ -65,9 +63,7 @@ data class AArch64Operand(
     val isListMember: Boolean = false
 )
 
-/**
- * AArch64 memory operand.
- */
+/** AArch64 memory operand. */
 data class AArch64MemoryOperand(
     val base: Register? = null,
     val index: Register? = null,

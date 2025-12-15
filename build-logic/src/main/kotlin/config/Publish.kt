@@ -1,6 +1,7 @@
 package config
 
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
+import external.CapstoneBuildConfigs
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
