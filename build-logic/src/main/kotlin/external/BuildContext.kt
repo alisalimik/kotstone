@@ -21,6 +21,7 @@ data class BuildContext(
     val hasEmscripten: Boolean,
     val emscriptenToolchainFile: String,
     val llvmNmPath: String,
+    val androidNdkPath: String?,
     val logger: Logger,
     val execOperations: ExecOperations,
     val fileSystemOperations: FileSystemOperations

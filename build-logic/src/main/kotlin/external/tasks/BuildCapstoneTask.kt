@@ -50,6 +50,9 @@ abstract class BuildCapstoneTask @Inject constructor(
     @get:Input
     abstract val llvmNmPath: Property<String>
 
+    @get:Input
+    abstract val androidNdkPath: Property<String>
+
     @get:Internal
     abstract val buildDirectory: DirectoryProperty
 
@@ -66,6 +69,7 @@ abstract class BuildCapstoneTask @Inject constructor(
             hasEmscripten = hasEmscripten.get(),
             emscriptenToolchainFile = emscriptenToolchainFile.get(),
             llvmNmPath = llvmNmPath.get(),
+            androidNdkPath = androidNdkPath.orNull?.takeIf { it.isNotEmpty() },
             logger = logger,
             execOperations = execOperations,
             fileSystemOperations = fileSystemOperations

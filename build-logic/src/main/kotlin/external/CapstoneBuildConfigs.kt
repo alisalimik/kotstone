@@ -3,6 +3,7 @@ package external
 import org.gradle.api.Project
 import platform.Host
 import platform.toolchains
+import java.io.File
 
 object CapstoneBuildConfigs {
 
@@ -236,10 +237,60 @@ object CapstoneBuildConfigs {
     }
 
     fun getAndroidNdkPath(project: Project): String? {
-        return System.getenv("ANDROID_NDK_ROOT")
-            ?: System.getenv("ANDROID_NDK")
-            ?: project.findProperty("ANDROID_NDK_ROOT") as? String
-            ?: project.findProperty("ANDROID_NDK") as? String
+        // First, check environment variables
+        System.getenv("ANDROID_NDK_ROOT")?.let { return it }
+        System.getenv("ANDROID_NDK")?.let { return it }
+
+        // Check gradle properties
+        (project.findProperty("ANDROID_NDK_ROOT") as? String)?.let { return it }
+        (project.findProperty("ANDROID_NDK") as? String)?.let { return it }
+
+        // Auto-detect Android SDK location
+        val sdkRoot = System.getenv("ANDROID_SDK_ROOT")
+            ?: System.getenv("ANDROID_HOME")
+            ?: getDefaultAndroidSdkPath()
+
+        if (sdkRoot == null) {
+            project.logger.warn("Android SDK not found. Set ANDROID_SDK_ROOT or ANDROID_HOME environment variable.")
+            return null
+        }
+
+        val sdkDir = File(sdkRoot)
+        if (!sdkDir.exists()) {
+            project.logger.warn("Android SDK directory not found at: $sdkRoot")
+            return null
+        }
+
+        // Find the latest NDK version in the SDK
+        val ndkDir = File(sdkDir, "ndk")
+        if (!ndkDir.exists() || !ndkDir.isDirectory) {
+            project.logger.warn("Android NDK directory not found at: ${ndkDir.absolutePath}")
+            return null
+        }
+
+        val ndkVersions = ndkDir.listFiles()?.filter { it.isDirectory }?.sortedByDescending { it.name }
+        if (ndkVersions.isNullOrEmpty()) {
+            project.logger.warn("No NDK versions found in: ${ndkDir.absolutePath}")
+            return null
+        }
+
+        val latestNdk = ndkVersions.first()
+        project.logger.info("Auto-detected Android NDK: ${latestNdk.absolutePath}")
+        return latestNdk.absolutePath
+    }
+
+    private fun getDefaultAndroidSdkPath(): String? {
+        val osName = System.getProperty("os.name").lowercase()
+        val userHome = System.getProperty("user.home")
+
+        return when {
+            osName.contains("mac") -> "$userHome/Library/Android/sdk"
+            osName.contains("win") -> System.getenv("LOCALAPPDATA")?.let { "$it\\Android\\Sdk" }
+            osName.contains("linux") -> "$userHome/Android/Sdk"
+            else -> null
+        }?.let { path ->
+            if (File(path).exists()) path else null
+        }
     }
 
     fun enableAndroidConfigs(project: Project, configs: Map<String, CapstoneBuildConfig>): Map<String, CapstoneBuildConfig> {
@@ -363,6 +414,37 @@ object CapstoneBuildConfigs {
      * instead of Project
      */
     fun getConfigsFromContext(buildContext: BuildContext): Map<String, CapstoneBuildConfig> {
+        // Helper to create Android configs with NDK from context
+        fun androidConfigFromContext(targetName: String, abi: String, buildShared: Boolean = false): CapstoneBuildConfig {
+            val ndkPath = buildContext.androidNdkPath
+            return if (ndkPath != null) {
+                val toolchainFile = "$ndkPath/build/cmake/android.toolchain.cmake"
+                CapstoneBuildConfig(
+                    targetName = targetName,
+                    cmakeSystemName = "Android",
+                    cmakeToolchainFile = toolchainFile,
+                    additionalCMakeArgs = listOf(
+                        "-DANDROID_ABI=$abi",
+                        "-DANDROID_PLATFORM=android-21",
+                        "-DANDROID_NDK=$ndkPath"
+                    ),
+                    enabled = true,
+                    buildShared = buildShared
+                )
+            } else {
+                CapstoneBuildConfig(
+                    targetName = targetName,
+                    cmakeSystemName = "Android",
+                    additionalCMakeArgs = listOf(
+                        "-DANDROID_ABI=$abi",
+                        "-DANDROID_PLATFORM=android-21"
+                    ),
+                    enabled = false,
+                    buildShared = buildShared
+                )
+            }
+        }
+
         // Helper to create Linux configs with captured toolchain state
         fun linuxConfigFromContext(targetName: String, arch: String, triple: String? = null, shared: Boolean = false): CapstoneBuildConfig {
             // For configuration cache compatibility, we use simplified logic
@@ -469,16 +551,16 @@ object CapstoneBuildConfigs {
             "mingwX86Shared" to mingwConfigFromContext("mingwX86Shared", "x86", shared = true),
 
             // Android Native (static for native targets)
-            "androidNativeArm64" to androidNativeConfig("androidNativeArm64", "arm64-v8a"),
-            "androidNativeArm32" to androidNativeConfig("androidNativeArm32", "armeabi-v7a"),
-            "androidNativeX64" to androidNativeConfig("androidNativeX64", "x86_64"),
-            "androidNativeX86" to androidNativeConfig("androidNativeX86", "x86"),
+            "androidNativeArm64" to androidConfigFromContext("androidNativeArm64", "arm64-v8a"),
+            "androidNativeArm32" to androidConfigFromContext("androidNativeArm32", "armeabi-v7a"),
+            "androidNativeX64" to androidConfigFromContext("androidNativeX64", "x86_64"),
+            "androidNativeX86" to androidConfigFromContext("androidNativeX86", "x86"),
 
             // Android Shared (for Android runtime)
-            "androidArm64Shared" to androidNativeConfig("androidArm64Shared", "arm64-v8a", buildShared = true),
-            "androidArm32Shared" to androidNativeConfig("androidArm32Shared", "armeabi-v7a", buildShared = true),
-            "androidX64Shared" to androidNativeConfig("androidX64Shared", "x86_64", buildShared = true),
-            "androidX86Shared" to androidNativeConfig("androidX86Shared", "x86", buildShared = true),
+            "androidArm64Shared" to androidConfigFromContext("androidArm64Shared", "arm64-v8a", buildShared = true),
+            "androidArm32Shared" to androidConfigFromContext("androidArm32Shared", "armeabi-v7a", buildShared = true),
+            "androidX64Shared" to androidConfigFromContext("androidX64Shared", "x86_64", buildShared = true),
+            "androidX86Shared" to androidConfigFromContext("androidX86Shared", "x86", buildShared = true),
 
             // WASM (configuration cache compatible - check emscripten from context)
             "wasmJs" to CapstoneBuildConfig(

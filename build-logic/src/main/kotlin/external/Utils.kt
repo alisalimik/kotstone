@@ -68,6 +68,10 @@ fun Project.registerCapstoneBuildTasks() {
         task.hasEmscripten.set(this@registerCapstoneBuildTasks.toolchains.hasEmscripten)
         task.emscriptenToolchainFile.set(this@registerCapstoneBuildTasks.toolchains.findEmscriptenToolchain())
         task.llvmNmPath.set(this@registerCapstoneBuildTasks.toolchains.getLlvmNm())
+        // Set androidNdkPath with convention (empty string if not found)
+        task.androidNdkPath.convention(provider {
+            external.CapstoneBuildConfigs.getAndroidNdkPath(this@registerCapstoneBuildTasks) ?: ""
+        })
     }
 
     val nativeTargets = kotlin.targets.filterIsInstance<KotlinNativeTarget>()
