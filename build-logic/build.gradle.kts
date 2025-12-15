@@ -32,4 +32,6 @@ dependencies {
     implementation(libs.ktfmt.gradle)
     implementation(libs.dokka.gradle)
     implementation(libs.android.gradle)
+    implementation(libs.detekt.gradle)
+    implementation(libs.binary.validator)
 }

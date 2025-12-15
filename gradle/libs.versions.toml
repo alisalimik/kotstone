@@ -9,6 +9,8 @@ ktfmt = "0.25.0"
 dokka = "2.1.0"
 publish = "0.35.0"
 runner = "1.7.0"
+detekt = "1.23.8"
+binvalidator = "0.18.1"
 
 [libraries]
 # Dependencies
@@ -33,6 +35,10 @@ java-jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
 
 ## Formatter
 ktfmt-gradle = { group = "com.ncorti.ktfmt.gradle", name = "plugin", version.ref = "ktfmt" }
+
+## Analyzer
+detekt-gradle = { group = "io.gitlab.arturbosch.detekt", name = "io.gitlab.arturbosch.detekt.gradle.plugin", version.ref = "detekt" }
+binary-validator = { group = "org.jetbrains.kotlinx.binary-compatibility-validator", name = "org.jetbrains.kotlinx.binary-compatibility-validator.gradle.plugin", version.ref = "binvalidator"}
 
 ## Documentation
 dokka-android = { group ="org.jetbrains.dokka", name = "android-documentation-plugin", version.ref = "dokka" }
