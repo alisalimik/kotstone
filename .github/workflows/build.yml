@@ -323,7 +323,6 @@ jobs:
           echo "=== Emscripten Verification ==="
           emcc --version
           em++ --version
-          emcmake --version
           which emcc
           echo ""
           echo "=== Emscripten System ==="

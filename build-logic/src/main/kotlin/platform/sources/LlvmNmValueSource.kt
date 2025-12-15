@@ -18,7 +18,14 @@ abstract class LlvmNmValueSource : ValueSource<String, LlvmNmValueSource.Paramet
     override fun obtain(): String {
         val emRoot = parameters.emscriptenRoot.orNull
         if (!emRoot.isNullOrEmpty()) {
-            val llvmNm = File(emRoot, "llvm-nm")
+            var llvmNm = File(emRoot, "llvm-nm")
+            if (llvmNm.exists()) {
+                return llvmNm.absolutePath
+            }
+
+            // Check upstream/bin location (sibling "bin" folder relative to emscripten root)
+            // emcc is often in upstream/emscripten, while llvm tools are in upstream/bin
+            llvmNm = File(File(emRoot).parentFile, "bin/llvm-nm")
             if (llvmNm.exists()) {
                 return llvmNm.absolutePath
             }
