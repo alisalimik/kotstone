@@ -1,32 +1,50 @@
 [versions]
 agp = "8.13.2"
+espressoCore = "3.7.0"
+junit = "1.3.0"
 kotlin = "2.2.21"
 coroutines = "1.10.2"
 jna = "5.18.1"
 ktfmt = "0.25.0"
 dokka = "2.1.0"
 publish = "0.35.0"
+runner = "1.7.0"
 
 [libraries]
-# Kotlin standard
+# Dependencies
+
+## Kotlin standard
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 
-# Kotlin extensions
+## Kotlin extensions
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 
-# Interop
+## Android extensions
+androidx-test-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-test-junit = { group = "androidx.test.ext",  name = "junit", version.ref = "junit" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+
+## Interop
 java-jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
 
-# Build logic
+# Gradle plugins
+
+## Formatter
 ktfmt-gradle = { group = "com.ncorti.ktfmt.gradle", name = "plugin", version.ref = "ktfmt" }
+
+## Documentation
 dokka-android = { group ="org.jetbrains.dokka", name = "android-documentation-plugin", version.ref = "dokka" }
 dokka-versioning = { group ="org.jetbrains.dokka", name = "versioning-plugin", version.ref = "dokka" }
 dokka-gradle = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
-maven-publish = { group = "com.vanniktech", name = "gradle-maven-publish-plugin", version.ref = "publish" }
+
+## Build tools
 kotlin-multiplatform = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
 android-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+
+## Publish
+maven-publish = { group = "com.vanniktech", name = "gradle-maven-publish-plugin", version.ref = "publish" }
 
 [plugins]
 kapstone-project = { id = "kapstone.project" }

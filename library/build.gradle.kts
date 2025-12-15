@@ -18,8 +18,18 @@ kotlin {
             }
         }
 
-        getByName("jvmAndAndroidMain").dependencies {
-            implementation(libs.java.jna)
+        jvmMain {
+            dependencies {
+                implementation(libs.java.jna)
+            }
+        }
+
+        androidInstrumentedTest {
+            dependencies {
+                implementation(libs.androidx.test.junit)
+                implementation(libs.androidx.test.espresso)
+                implementation(libs.androidx.test.runner)
+            }
         }
     }
 }
@@ -27,6 +37,11 @@ kotlin {
 android {
     namespace = "ca.moheektech.kapstone"
     compileSdk = 36
+
+    defaultConfig {
+        minSdk = 21
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 
     sourceSets {
         sourceSets["main"].jniLibs.srcDir("interop/linked-android")
@@ -36,4 +51,9 @@ android {
 dependencies {
     dokkaPlugin(libs.dokka.android)
     dokkaHtmlPlugin(libs.dokka.versioning)
+    implementation(libs.java.jna) {
+        artifact {
+            type = "aar"
+        }
+    }
 }
