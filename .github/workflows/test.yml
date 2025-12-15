@@ -395,7 +395,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -419,7 +419,7 @@ jobs:
       - name: Setup Emscripten SDK
         uses: mymindstorm/setup-emsdk@v14
         with:
-          version: '3.1.51'
+          version: '4.0.21'
           actions-cache-folder: 'emsdk-cache'
 
       - name: Verify Emscripten installation
@@ -624,13 +624,39 @@ jobs:
             ${{ runner.os }}-konan-android-
             ${{ runner.os }}-konan-
 
-      - name: Run Android unit tests
-        run: ./gradlew testDebugUnitTest --continue --stacktrace
-
-      - name: Run Android Native tests
+      - name: Enable KVM
         run: |
-          ./gradlew androidNativeArm64Test --continue --stacktrace || true
-          ./gradlew androidNativeX64Test --continue --stacktrace || true
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: AVD cache
+        uses: actions/cache@v5
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-36
+
+      - name: create and cache AVD
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching.
+
+      - name: Run Android device tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew connectedCheck
 
       - name: Upload test reports
         if: always()
@@ -638,7 +664,7 @@ jobs:
         with:
           name: test-reports-android
           path: |
-            library/build/reports/tests/
+            library/build/reports/androidTests/
             library/build/test-results/
           retention-days: 7
 
