@@ -361,27 +361,64 @@ object CapstoneBuildConfigs {
     fun getConfigsFromContext(buildContext: BuildContext): Map<String, CapstoneBuildConfig> {
         // Helper to create Linux configs with captured toolchain state
         fun linuxConfigFromContext(targetName: String, arch: String, triple: String? = null, shared: Boolean = false): CapstoneBuildConfig {
-            // Since we can't check for tools at execution time in a config-cache-safe way,
-            // we'll use the captured state from BuildContext
-            // For simplicity, assume configs are enabled if we're on a compatible host
-            return CapstoneBuildConfig(
-                targetName = targetName,
-                cmakeSystemName = "Linux",
-                cmakeSystemProcessor = arch,
-                enabled = buildContext.linuxX64OnMac || buildContext.nativeLinux,
-                buildShared = shared
-            )
+            // For configuration cache compatibility, we use simplified logic
+            // Zig cross-compilation from macOS to Linux
+            val isLinuxOnMac = buildContext.linuxX64OnMac
+            val isNativeLinux = buildContext.nativeLinux
+
+            return when {
+                isLinuxOnMac -> CapstoneBuildConfig(
+                    targetName = targetName,
+                    cmakeSystemName = "Linux",
+                    cCompiler = "zig",
+                    cxxCompiler = "zig",
+                    additionalCMakeArgs = listOf(
+                        "-DCMAKE_C_FLAGS=-target $arch-linux-gnu",
+                        "-DCMAKE_CXX_FLAGS=-target $arch-linux-gnu",
+                        // Add linker configuration for Zig
+                        "-DCMAKE_EXE_LINKER_FLAGS=-target $arch-linux-gnu",
+                        "-DCMAKE_SHARED_LINKER_FLAGS=-target $arch-linux-gnu"
+                    ),
+                    enabled = true,
+                    buildShared = shared
+                )
+                isNativeLinux -> CapstoneBuildConfig(
+                    targetName = targetName,
+                    cmakeSystemName = "Linux",
+                    enabled = true,
+                    buildShared = shared
+                )
+                else -> CapstoneBuildConfig(
+                    targetName = targetName,
+                    enabled = false,
+                    buildShared = shared
+                )
+            }
         }
 
         // Helper to create mingw configs
         fun mingwConfigFromContext(targetName: String, arch: String, shared: Boolean = false): CapstoneBuildConfig {
-            return CapstoneBuildConfig(
-                targetName = targetName,
-                cmakeSystemName = "Windows",
-                cmakeSystemProcessor = arch,
-                enabled = buildContext.mingwX64 || buildContext.mingwX86,
-                buildShared = shared
-            )
+            return when {
+                buildContext.mingwX64 || buildContext.mingwX86 -> CapstoneBuildConfig(
+                    targetName = targetName,
+                    cmakeSystemName = "Windows",
+                    cCompiler = "zig",
+                    cxxCompiler = "zig",
+                    additionalCMakeArgs = listOf(
+                        "-DCMAKE_C_FLAGS=-target $arch-windows-gnu",
+                        "-DCMAKE_CXX_FLAGS=-target $arch-windows-gnu",
+                        "-DCMAKE_EXE_LINKER_FLAGS=-target $arch-windows-gnu",
+                        "-DCMAKE_SHARED_LINKER_FLAGS=-target $arch-windows-gnu"
+                    ),
+                    enabled = true,
+                    buildShared = shared
+                )
+                else -> CapstoneBuildConfig(
+                    targetName = targetName,
+                    enabled = false,
+                    buildShared = shared
+                )
+            }
         }
 
         return mapOf(

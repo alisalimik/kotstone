@@ -55,6 +55,7 @@ fun Project.registerCapstoneBuildTasks() {
     }
 
     val allBuildTaskNames = mutableListOf<String>()
+    val androidBuildTaskNames = mutableListOf<String>()
 
     fun configureBuildCapstoneTask(task: BuildCapstoneTask) {
         task.rootProjectDir.set(rootProject.layout.projectDirectory)
@@ -73,6 +74,10 @@ fun Project.registerCapstoneBuildTasks() {
     for (target in nativeTargets) {
         val taskName = "buildCapstone${target.targetName.capitalize()}"
         allBuildTaskNames.add(taskName)
+        // Track Android native targets separately
+        if (target.targetName.startsWith("androidNative")) {
+            androidBuildTaskNames.add(taskName)
+        }
         tasks.register(taskName, BuildCapstoneTask::class.java).configure {
             group = "capstone"
             description = "Build Capstone native library for ${target.targetName}"
@@ -103,6 +108,10 @@ fun Project.registerCapstoneBuildTasks() {
     for (targetName in sharedLibraryTargets) {
         val taskName = "buildCapstone${targetName.capitalize()}"
         allBuildTaskNames.add(taskName)
+        // Track Android shared library targets separately
+        if (targetName.startsWith("android")) {
+            androidBuildTaskNames.add(taskName)
+        }
         tasks.register(taskName, external.tasks.BuildCapstoneTask::class.java).configure {
             group = "capstone"
             description = "Build Capstone shared library for $targetName"
@@ -116,6 +125,14 @@ fun Project.registerCapstoneBuildTasks() {
         description = "Build Capstone native library for all enabled targets"
         // Make it depend on all individual build tasks
         dependsOn(allBuildTaskNames)
+    }
+
+    // Task to build all Android NDK targets
+    tasks.register("buildCapstoneAndroid", BuildAllCapstoneTask::class.java).configure {
+        group = "capstone"
+        description = "Build Capstone native library for all Android NDK targets"
+        // Make it depend on all Android build tasks
+        dependsOn(androidBuildTaskNames)
     }
 
     afterEvaluate {

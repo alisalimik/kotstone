@@ -77,7 +77,7 @@ jobs:
           path: |
             build/capstone
             library/interop/lib
-            library/interop/include
+            library/interop/capstone/include
           key: ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-gcc-${{ steps.build-tools.outputs.gcc_version }}
           restore-keys: |
             ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
@@ -92,7 +92,7 @@ jobs:
         run: |
           echo "=== Capstone Build Verification ==="
           ls -la library/interop/lib/linuxX64/ || echo "linuxX64 library not found"
-          ls -la library/interop/include/ || echo "Headers not found"
+          ls -la library/interop/capstone/include/ || echo "Headers not found"
           if [ -f library/interop/lib/linuxX64/libcapstone.a ]; then
             echo "✓ Capstone library found"
             ls -lh library/interop/lib/linuxX64/libcapstone.a
@@ -211,7 +211,7 @@ jobs:
           path: |
             build/capstone
             library/interop/lib
-            library/interop/include
+            library/interop/capstone/include
           key: ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-xcode-${{ steps.build-tools.outputs.xcode_version }}
           restore-keys: |
             ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
@@ -332,7 +332,7 @@ jobs:
           path: |
             build/capstone
             library/interop/lib
-            library/interop/include
+            library/interop/capstone/include
           key: ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-gcc-${{ steps.build-tools.outputs.gcc_version }}
           restore-keys: |
             ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
@@ -396,8 +396,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
@@ -538,13 +536,13 @@ jobs:
 
       - name: Install Android SDK components
         run: |
-          sdkmanager --list
           echo "=== Installing Android SDK components ==="
           echo "y" | sdkmanager "platform-tools"
           echo "y" | sdkmanager "build-tools;34.0.0"
           echo "y" | sdkmanager "platforms;android-34"
           echo "y" | sdkmanager "ndk;26.1.10909125"
           echo "y" | sdkmanager "cmake;3.22.1"
+          echo "y" | sdkmanager "system-images;android-34;google_apis;x86_64"
 
       - name: Set Android environment variables
         run: |
@@ -590,25 +588,35 @@ jobs:
             build/capstone
             library/interop/lib
             library/interop/linked-android
-            library/interop/include
+            library/interop/capstone/include
           key: ${{ runner.os }}-capstone-android-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-ndk-${{ steps.build-tools.outputs.ndk_version }}
           restore-keys: |
             ${{ runner.os }}-capstone-android-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
             ${{ runner.os }}-capstone-android-${{ hashFiles('library/interop/capstone/**') }}-
             ${{ runner.os }}-capstone-android-
 
-      - name: Build Capstone for Android
+      - name: Build Capstone for Android NDK
         if: steps.cache-capstone.outputs.cache-hit != 'true'
-        run: ./gradlew buildCapstoneAndroidArm64Shared --info
+        run: ./gradlew buildCapstoneAndroid --info --configuration-cache
 
       - name: Verify Capstone Android build
         run: |
           echo "=== Capstone Android Build Verification ==="
+          echo "=== Shared Libraries (JNI) ==="
           for abi in arm64-v8a armeabi-v7a x86_64 x86; do
             if [ -f "library/interop/linked-android/$abi/libcapstone.so" ]; then
-              echo "✓ $abi: $(ls -lh library/interop/linked-android/$abi/libcapstone.so | awk '{print $5}')"
+              echo "✓ $abi shared: $(ls -lh library/interop/linked-android/$abi/libcapstone.so | awk '{print $5}')"
             else
-              echo "✗ $abi: missing"
+              echo "✗ $abi shared: missing"
+            fi
+          done
+          echo ""
+          echo "=== Native Libraries (Kotlin/Native) ==="
+          for target in androidNativeArm64 androidNativeArm32 androidNativeX64 androidNativeX86; do
+            if [ -f "library/interop/lib/$target/libcapstone.a" ]; then
+              echo "✓ $target: $(ls -lh library/interop/lib/$target/libcapstone.a | awk '{print $5}')"
+            else
+              echo "✗ $target: missing"
             fi
           done
 
@@ -634,26 +642,30 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-36
+          key: avd-34-x86_64
 
       - name: create and cache AVD
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 36
+          api-level: 34
+          arch: x86_64
+          target: google_apis
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
-          script: echo "Generated AVD snapshot for caching.
+          script: echo "Generated AVD snapshot for caching."
 
       - name: Run Android device tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 36
+          api-level: 34
+          arch: x86_64
+          target: google_apis
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedCheck
+          script: ./gradlew connectedCheck --continue --stacktrace
 
       - name: Upload test reports
         if: always()
