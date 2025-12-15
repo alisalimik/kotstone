@@ -73,7 +73,7 @@ jobs:
 
       - name: Cache Capstone builds
         id: cache-capstone
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/capstone
@@ -102,7 +102,7 @@ jobs:
           fi
 
       - name: Cache Kotlin/Native
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
@@ -208,7 +208,7 @@ jobs:
 
       - name: Cache Capstone builds
         id: cache-capstone
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/capstone
@@ -236,7 +236,7 @@ jobs:
           done
 
       - name: Cache Kotlin/Native
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
@@ -329,7 +329,7 @@ jobs:
 
       - name: Cache Capstone builds
         id: cache-capstone
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/capstone
@@ -356,7 +356,7 @@ jobs:
           fi
 
       - name: Cache Kotlin/Native
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
@@ -454,7 +454,7 @@ jobs:
 
       - name: Cache Capstone WASM builds
         id: cache-capstone
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/capstone_wasm_build
@@ -485,7 +485,7 @@ jobs:
           fi
 
       - name: Cache Kotlin/Native
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.konan
           key: ${{ runner.os }}-konan-wasm-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
@@ -587,7 +587,7 @@ jobs:
 
       - name: Cache Capstone Android builds
         id: cache-capstone
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             build/capstone
@@ -616,7 +616,7 @@ jobs:
           done
 
       - name: Cache Kotlin/Native
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.konan
           key: ${{ runner.os }}-konan-android-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
