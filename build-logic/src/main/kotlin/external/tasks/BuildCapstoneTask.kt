@@ -36,6 +36,9 @@ abstract class BuildCapstoneTask @Inject constructor(
     abstract val nativeLinux: Property<Boolean>
 
     @get:Input
+    abstract val nativeWindows: Property<Boolean>
+
+    @get:Input
     abstract val mingwX64: Property<Boolean>
 
     @get:Input
@@ -64,6 +67,7 @@ abstract class BuildCapstoneTask @Inject constructor(
             hasNinja = hasNinja.get(),
             linuxX64OnMac = linuxX64OnMac.get(),
             nativeLinux = nativeLinux.get(),
+            nativeWindows = nativeWindows.get(),
             mingwX64 = mingwX64.get(),
             mingwX86 = mingwX86.get(),
             hasEmscripten = hasEmscripten.get(),

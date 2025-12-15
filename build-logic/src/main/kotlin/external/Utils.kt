@@ -27,10 +27,16 @@ internal fun getZigToolchainFile(buildDirectory: File): File {
             set(CMAKE_CXX_COMPILER "zig")
             set(CMAKE_C_COMPILER_ARG1 "cc")
             set(CMAKE_CXX_COMPILER_ARG1 "c++")
-            set(CMAKE_AR "zig;ar" CACHE STRING "" FORCE)
-            set(CMAKE_RANLIB "zig;ranlib" CACHE STRING "" FORCE)
-            set(CMAKE_C_COMPILER_AR "zig;ar" CACHE STRING "" FORCE)
-            set(CMAKE_CXX_COMPILER_AR "zig;ar" CACHE STRING "" FORCE)
+            set(CMAKE_AR "zig" CACHE STRING "" FORCE)
+            set(CMAKE_RANLIB "zig" CACHE STRING "" FORCE)
+            
+            # Override archive creation commands to use 'zig ar'
+            set(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> ar qc <TARGET> <OBJECTS>")
+            set(CMAKE_C_ARCHIVE_APPEND "<CMAKE_AR> ar q <TARGET> <OBJECTS>")
+            set(CMAKE_C_ARCHIVE_FINISH "<CMAKE_AR> ranlib <TARGET>")
+            set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> ar qc <TARGET> <OBJECTS>")
+            set(CMAKE_CXX_ARCHIVE_APPEND "<CMAKE_AR> ar q <TARGET> <OBJECTS>")
+            set(CMAKE_CXX_ARCHIVE_FINISH "<CMAKE_AR> ranlib <TARGET>")
 
             # Fix for Zig + Ninja/Make dependency file issue by suppressing the flags
             set(CMAKE_DEPFILE_FLAGS_C "" CACHE STRING "" FORCE)
@@ -63,6 +69,7 @@ fun Project.registerCapstoneBuildTasks() {
         task.hasNinja.set(this@registerCapstoneBuildTasks.toolchains.commandExists("ninja"))
         task.linuxX64OnMac.set(this@registerCapstoneBuildTasks.toolchains.linuxX64OnMac)
         task.nativeLinux.set(this@registerCapstoneBuildTasks.toolchains.nativeLinux)
+        task.nativeWindows.set(this@registerCapstoneBuildTasks.toolchains.nativeWindows)
         task.mingwX64.set(this@registerCapstoneBuildTasks.toolchains.mingwX64)
         task.mingwX86.set(this@registerCapstoneBuildTasks.toolchains.mingwX86)
         task.hasEmscripten.set(this@registerCapstoneBuildTasks.toolchains.hasEmscripten)
@@ -128,6 +135,13 @@ fun Project.registerCapstoneBuildTasks() {
         group = "capstone"
         description = "Build Capstone native library for all enabled targets"
         // Make it depend on all individual build tasks
+        dependsOn(allBuildTaskNames)
+    }
+
+    // Alias for capstoneBuildAll (requested by user)
+    tasks.register("capstoneBuildAll", BuildAllCapstoneTask::class.java).configure {
+        group = "capstone"
+        description = "Alias for buildCapstoneAll"
         dependsOn(allBuildTaskNames)
     }
 

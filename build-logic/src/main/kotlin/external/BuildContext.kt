@@ -16,6 +16,7 @@ data class BuildContext(
     val hasNinja: Boolean,
     val linuxX64OnMac: Boolean,
     val nativeLinux: Boolean,
+    val nativeWindows: Boolean,
     val mingwX64: Boolean,
     val mingwX86: Boolean,
     val hasEmscripten: Boolean,

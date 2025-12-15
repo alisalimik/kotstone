@@ -111,7 +111,7 @@ object CapstoneBuildConfigs {
         )
     }
 
-    private fun linuxConfig(project: Project, targetName: String, arch: String, triple: String? = null, shared: Boolean = false): CapstoneBuildConfig {
+    private fun linuxConfig(project: Project, targetName: String, arch: String, triple: String? = null, shared: Boolean = false, abi: String = "gnu"): CapstoneBuildConfig {
         val useZig = project.toolchains.hasZig.get()
         val useCrossGCC = triple != null && project.toolchains.commandExists("$triple-gcc").get()
 
@@ -148,8 +148,8 @@ object CapstoneBuildConfigs {
                 additionalCMakeArgs = listOf(
                     // Toolchain file handles compiler setup, we just pass arch flags here if needed
                     // Zig uses -target for cross compilation
-                    "-DCMAKE_C_FLAGS=-target $arch-linux-gnu",
-                    "-DCMAKE_CXX_FLAGS=-target $arch-linux-gnu"
+                    "-DCMAKE_C_FLAGS=-target $arch-linux-$abi",
+                    "-DCMAKE_CXX_FLAGS=-target $arch-linux-$abi"
                 ),
                 enabled = true,
                 buildShared = shared
@@ -172,39 +172,65 @@ object CapstoneBuildConfigs {
     private fun mingwConfig(project: Project, targetName: String, arch: String, triple: String, shared: Boolean = false): CapstoneBuildConfig {
         val useZig = project.toolchains.hasZig.get()
         val useCrossGCC = project.toolchains.commandExists("$triple-gcc").get()
+        val isNativeWindows = Host.isWindows
 
         return when {
-            useZig -> CapstoneBuildConfig(
-                targetName = targetName,
-                cmakeSystemName = "Windows",
-                cCompiler = "zig",
-                cxxCompiler = "zig",
-                additionalCMakeArgs = listOf(
-                    "-DCMAKE_C_FLAGS=-target $arch-windows-gnu",
-                    "-DCMAKE_CXX_FLAGS=-target $arch-windows-gnu"
-                ),
-                enabled = true,
-                buildShared = shared
-            )
-            useCrossGCC -> CapstoneBuildConfig(
-                targetName = targetName,
-                cCompiler = "$triple-gcc",
-                cxxCompiler = "$triple-g++",
-                cmakeSystemName = "Windows",
-                cmakeSystemProcessor = if (arch == "x86_64") "AMD64" else "x86",
-                enabled = true,
-                buildShared = shared
-            )
-            project.toolchains.mingwX64.get() && arch == "x86_64" -> CapstoneBuildConfig( // Fallback for native/other
-                targetName = targetName,
-                cmakeSystemName = "Windows",
-                enabled = true,
-                buildShared = shared
-            )
-            else -> CapstoneBuildConfig(
-                targetName = targetName,
-                enabled = false
-            )
+            // On native Windows, use the native MinGW compiler (let CMake find it)
+            isNativeWindows && project.toolchains.mingwX64.get() && arch == "x86_64" -> {
+                println("Configuration: Enabling Windows target $targetName using native MinGW")
+                CapstoneBuildConfig(
+                    targetName = targetName,
+                    cmakeSystemName = "Windows",
+                    enabled = true,
+                    buildShared = shared
+                )
+            }
+            isNativeWindows && project.toolchains.mingwX86.get() && arch == "x86" -> {
+                println("Configuration: Enabling Windows target $targetName using native MinGW")
+                CapstoneBuildConfig(
+                    targetName = targetName,
+                    cmakeSystemName = "Windows",
+                    enabled = true,
+                    buildShared = shared
+                )
+            }
+            // Cross-compilation: prefer MinGW cross-GCC over Zig
+            useCrossGCC -> {
+                println("Configuration: Enabling Windows target $targetName using cross-GCC ($triple-gcc)")
+                CapstoneBuildConfig(
+                    targetName = targetName,
+                    cCompiler = "$triple-gcc",
+                    cxxCompiler = "$triple-g++",
+                    cmakeSystemName = "Windows",
+                    cmakeSystemProcessor = if (arch == "x86_64") "AMD64" else "x86",
+                    enabled = true,
+                    buildShared = shared
+                )
+            }
+            // Cross-compilation: use Zig as fallback
+            useZig && !isNativeWindows -> {
+                println("Configuration: Enabling Windows target $targetName using Zig")
+                CapstoneBuildConfig(
+                    targetName = targetName,
+                    cmakeSystemName = "Windows",
+                    cCompiler = "zig",
+                    cxxCompiler = "zig",
+                    additionalCMakeArgs = listOf(
+                        "-DCMAKE_C_FLAGS=-target $arch-windows-gnu",
+                        "-DCMAKE_CXX_FLAGS=-target $arch-windows-gnu"
+                    ),
+                    enabled = true,
+                    buildShared = shared
+                )
+            }
+            else -> {
+                println("Configuration: No cross-compilation toolchain found for $targetName")
+                CapstoneBuildConfig(
+                    targetName = targetName,
+                    enabled = false,
+                    buildShared = shared
+                )
+            }
         }
     }
 
@@ -341,12 +367,13 @@ object CapstoneBuildConfigs {
         // Linux
         "linuxX64" to linuxConfig(project, "linuxX64", "x86_64"),
         "linuxArm64" to linuxConfig(project, "linuxArm64", "aarch64", "aarch64-unknown-linux-gnu"),
+        "linuxArm32Hfp" to linuxConfig(project, "linuxArm32Hfp", "arm", "arm-unknown-linux-gnueabihf", abi = "gnueabihf"),
 
         // Linux Shared (for JVM)
         "linuxX64Shared" to linuxConfig(project, "linuxX64Shared", "x86_64", shared = true),
         "linuxX86Shared" to linuxConfig(project, "linuxX86Shared", "x86", shared = true),
         "linuxArm64Shared" to linuxConfig(project, "linuxArm64Shared", "aarch64", "aarch64-unknown-linux-gnu", shared = true),
-        "linuxArm32Shared" to linuxConfig(project, "linuxArm32Shared", "arm", "arm-unknown-linux-gnueabihf", shared = true),
+        "linuxArm32Shared" to linuxConfig(project, "linuxArm32Shared", "arm", "arm-unknown-linux-gnueabihf", shared = true, abi = "gnueabihf"),
 
         // Windows
         "mingwX64" to mingwConfig(project, "mingwX64", "x86_64", "x86_64-w64-mingw32"),
@@ -446,7 +473,7 @@ object CapstoneBuildConfigs {
         }
 
         // Helper to create Linux configs with captured toolchain state
-        fun linuxConfigFromContext(targetName: String, arch: String, triple: String? = null, shared: Boolean = false): CapstoneBuildConfig {
+        fun linuxConfigFromContext(targetName: String, arch: String, triple: String? = null, shared: Boolean = false, abi: String = "gnu"): CapstoneBuildConfig {
             // For configuration cache compatibility, we use simplified logic
             // Zig cross-compilation from macOS to Linux
             val isLinuxOnMac = buildContext.linuxX64OnMac
@@ -459,11 +486,11 @@ object CapstoneBuildConfigs {
                     cCompiler = "zig",
                     cxxCompiler = "zig",
                     additionalCMakeArgs = listOf(
-                        "-DCMAKE_C_FLAGS=-target $arch-linux-gnu",
-                        "-DCMAKE_CXX_FLAGS=-target $arch-linux-gnu",
+                        "-DCMAKE_C_FLAGS=-target $arch-linux-$abi",
+                        "-DCMAKE_CXX_FLAGS=-target $arch-linux-$abi",
                         // Add linker configuration for Zig
-                        "-DCMAKE_EXE_LINKER_FLAGS=-target $arch-linux-gnu",
-                        "-DCMAKE_SHARED_LINKER_FLAGS=-target $arch-linux-gnu"
+                        "-DCMAKE_EXE_LINKER_FLAGS=-target $arch-linux-$abi",
+                        "-DCMAKE_SHARED_LINKER_FLAGS=-target $arch-linux-$abi"
                     ),
                     enabled = true,
                     buildShared = shared
@@ -484,8 +511,24 @@ object CapstoneBuildConfigs {
 
         // Helper to create mingw configs
         fun mingwConfigFromContext(targetName: String, arch: String, shared: Boolean = false): CapstoneBuildConfig {
+            val isNativeWindows = buildContext.nativeWindows
+
             return when {
-                buildContext.mingwX64 || buildContext.mingwX86 -> CapstoneBuildConfig(
+                // On native Windows, use the native MinGW compiler
+                isNativeWindows && buildContext.mingwX64 && arch == "x86_64" -> CapstoneBuildConfig(
+                    targetName = targetName,
+                    cmakeSystemName = "Windows",
+                    enabled = true,
+                    buildShared = shared
+                )
+                isNativeWindows && buildContext.mingwX86 && arch == "x86" -> CapstoneBuildConfig(
+                    targetName = targetName,
+                    cmakeSystemName = "Windows",
+                    enabled = true,
+                    buildShared = shared
+                )
+                // Cross-compilation: use Zig only if not on Windows
+                !isNativeWindows && (buildContext.mingwX64 || buildContext.mingwX86) -> CapstoneBuildConfig(
                     targetName = targetName,
                     cmakeSystemName = "Windows",
                     cCompiler = "zig",
@@ -536,12 +579,13 @@ object CapstoneBuildConfigs {
             // Linux - use simplified configs
             "linuxX64" to linuxConfigFromContext("linuxX64", "x86_64"),
             "linuxArm64" to linuxConfigFromContext("linuxArm64", "aarch64"),
+            "linuxArm32Hfp" to linuxConfigFromContext("linuxArm32Hfp", "arm", abi = "gnueabihf"),
 
             // Linux Shared (for JVM)
             "linuxX64Shared" to linuxConfigFromContext("linuxX64Shared", "x86_64", shared = true),
             "linuxX86Shared" to linuxConfigFromContext("linuxX86Shared", "x86", shared = true),
             "linuxArm64Shared" to linuxConfigFromContext("linuxArm64Shared", "aarch64", shared = true),
-            "linuxArm32Shared" to linuxConfigFromContext("linuxArm32Shared", "arm", shared = true),
+            "linuxArm32Shared" to linuxConfigFromContext("linuxArm32Shared", "arm", shared = true, abi = "gnueabihf"),
 
             // Windows
             "mingwX64" to mingwConfigFromContext("mingwX64", "x86_64"),

@@ -36,3 +36,4 @@
 /src/webMain/resources/capstone.wasm
 /src/wasmWasiMain/resources/capstone-bridge.mjs
 /src/wasmWasiMain/resources/capstone.wasm
+/interop/lib/linuxArm32Hfp/libcapstone.a

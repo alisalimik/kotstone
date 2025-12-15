@@ -36,6 +36,10 @@ open class ToolchainProviders(private val project: Project) {
         project.providers.provider { Host.isLinux }
     }
 
+    val nativeWindows: Provider<Boolean> by lazy {
+        project.providers.provider { Host.isWindows }
+    }
+
     val linuxX64OnMac: Provider<Boolean> by lazy {
         project.providers.provider {
             Host.isMac && (commandExists("x86_64-linux-gnu-gcc").get() || commandExists("x86_64-linux-musl-gcc").get() || hasZig.get() || commandExists(
