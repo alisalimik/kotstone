@@ -16,8 +16,9 @@ import java.io.File
 fun buildCapstoneWasmFromContext(buildContext: BuildContext, targetName: String) {
     val projectDir = buildContext.rootProjectDir
     val capstoneSource = File(projectDir, "library/interop/capstone")
-    val workDir = File(projectDir, "external/capstone_wasm_build")
-    val buildDir = File(workDir, "external")
+    val workDir = File(buildContext.buildDirectory, "capstone_wasm_build/$targetName")
+    val sourceDir = File(workDir, "source")  // Where we'll put the wrapper CMakeLists.txt
+    val buildDir = File(workDir, "build")    // Separate build directory
     val distDir = File(workDir, "dist")
 
     val outputDir = when (targetName) {
@@ -57,13 +58,12 @@ fun buildCapstoneWasmFromContext(buildContext: BuildContext, targetName: String)
     val emcpp = File(emRoot, "em++").absolutePath
 
     buildContext.logger.lifecycle("Configuring CMake for WebAssembly static library...")
+    sourceDir.mkdirs()
     buildDir.mkdirs()
-
-
 
     // Create a wrapper CMakeLists.txt to avoid PROJECT_IS_TOP_LEVEL being true for Capstone
     // This prevents CPackConfig.txt from being included, which causes errors in some environments
-    val wrapperCMakeFile = File(buildDir, "CMakeLists.txt")
+    val wrapperCMakeFile = File(sourceDir, "CMakeLists.txt")
     wrapperCMakeFile.writeText("""
         cmake_minimum_required(VERSION 3.15)
         project(CapstoneWasmWrapper)
@@ -79,7 +79,9 @@ fun buildCapstoneWasmFromContext(buildContext: BuildContext, targetName: String)
     """.trimIndent())
 
     val cmakeConfigArgs = listOf(
-        "cmake", "-S", buildDir.absolutePath, "-B", buildDir.absolutePath,
+        "cmake",
+        "-S", sourceDir.absolutePath,  // Source directory (where wrapper CMakeLists.txt is)
+        "-B", buildDir.absolutePath,   // Build directory (separate from source)
         "-DCMAKE_TOOLCHAIN_FILE=$toolchainFile",
         "-DCMAKE_C_COMPILER=$emcc",
         "-DCMAKE_CXX_COMPILER=$emcpp",
