@@ -3686,3 +3686,165 @@ import kotlin.js.JsStatic
 @JsStatic internal const val X86_XOP_CC_FALSE = 7
 
 @JsStatic internal const val X86_XOP_CC_TRUE = 8
+
+@JsStatic internal const val X86_AVX_BCAST_INVALID = 0
+
+@JsStatic internal const val X86_AVX_BCAST_2 = 1
+
+@JsStatic internal const val X86_AVX_BCAST_4 = 2
+
+@JsStatic internal const val X86_AVX_BCAST_8 = 3
+
+@JsStatic internal const val X86_AVX_BCAST_16 = 4
+
+@JsStatic internal const val X86_AVX_CC_INVALID = 0
+
+@JsStatic internal const val X86_AVX_CC_EQ = 1
+
+@JsStatic internal const val X86_AVX_CC_LT = 2
+
+@JsStatic internal const val X86_AVX_CC_LE = 3
+
+@JsStatic internal const val X86_AVX_CC_UNORD = 4
+
+@JsStatic internal const val X86_AVX_CC_NEQ = 5
+
+@JsStatic internal const val X86_AVX_CC_NLT = 6
+
+@JsStatic internal const val X86_AVX_CC_NLE = 7
+
+@JsStatic internal const val X86_AVX_CC_ORD = 8
+
+@JsStatic internal const val X86_AVX_CC_EQ_UQ = 9
+
+@JsStatic internal const val X86_AVX_CC_NGE = 10
+
+@JsStatic internal const val X86_AVX_CC_NGT = 11
+
+@JsStatic internal const val X86_AVX_CC_FALSE = 12
+
+@JsStatic internal const val X86_AVX_CC_NEQ_OQ = 13
+
+@JsStatic internal const val X86_AVX_CC_GE = 14
+
+@JsStatic internal const val X86_AVX_CC_GT = 15
+
+@JsStatic internal const val X86_AVX_CC_TRUE = 16
+
+@JsStatic internal const val X86_AVX_CC_EQ_OS = 17
+
+@JsStatic internal const val X86_AVX_CC_LT_OQ = 18
+
+@JsStatic internal const val X86_AVX_CC_LE_OQ = 19
+
+@JsStatic internal const val X86_AVX_CC_UNORD_S = 20
+
+@JsStatic internal const val X86_AVX_CC_NEQ_US = 21
+
+@JsStatic internal const val X86_AVX_CC_NLT_UQ = 22
+
+@JsStatic internal const val X86_AVX_CC_NLE_UQ = 23
+
+@JsStatic internal const val X86_AVX_CC_ORD_S = 24
+
+@JsStatic internal const val X86_AVX_CC_EQ_US = 25
+
+@JsStatic internal const val X86_AVX_CC_NGE_UQ = 26
+
+@JsStatic internal const val X86_AVX_CC_NGT_UQ = 27
+
+@JsStatic internal const val X86_AVX_CC_FALSE_OS = 28
+
+@JsStatic internal const val X86_AVX_CC_NEQ_OS = 29
+
+@JsStatic internal const val X86_AVX_CC_GE_OQ = 30
+
+@JsStatic internal const val X86_AVX_CC_GT_OQ = 31
+
+@JsStatic internal const val X86_AVX_CC_TRUE_US = 32
+
+@JsStatic internal const val X86_AVX_RM_INVALID = 0
+
+@JsStatic internal const val X86_AVX_RM_RN = 1
+
+@JsStatic internal const val X86_AVX_RM_RD = 2
+
+@JsStatic internal const val X86_AVX_RM_RU = 3
+
+@JsStatic internal const val X86_AVX_RM_RZ = 4
+
+@JsStatic internal const val X86_PREFIX_0 = 0x0
+@JsStatic internal const val X86_PREFIX_LOCK = 0xf0
+@JsStatic internal const val X86_PREFIX_REP = 0xf3
+@JsStatic internal const val X86_PREFIX_REPE = 0xf3
+@JsStatic internal const val X86_PREFIX_REPNE = 0xf2
+
+@JsStatic internal const val X86_PREFIX_CS = 0x2e
+@JsStatic internal const val X86_PREFIX_SS = 0x36
+@JsStatic internal const val X86_PREFIX_DS = 0x3e
+@JsStatic internal const val X86_PREFIX_ES = 0x26
+@JsStatic internal const val X86_PREFIX_FS = 0x64
+@JsStatic internal const val X86_PREFIX_GS = 0x65
+
+@JsStatic internal const val X86_PREFIX_OPSIZE = 0x66
+@JsStatic internal const val X86_PREFIX_ADDRSIZE = 0x67
+
+@JsStatic internal val X86_EFLAGS_MODIFY_AF = (1UL shl 0)
+@JsStatic internal val X86_EFLAGS_MODIFY_CF = (1UL shl 1)
+@JsStatic internal val X86_EFLAGS_MODIFY_SF = (1UL shl 2)
+@JsStatic internal val X86_EFLAGS_MODIFY_ZF = (1UL shl 3)
+@JsStatic internal val X86_EFLAGS_MODIFY_PF = (1UL shl 4)
+@JsStatic internal val X86_EFLAGS_MODIFY_OF = (1UL shl 5)
+@JsStatic internal val X86_EFLAGS_MODIFY_TF = (1UL shl 6)
+@JsStatic internal val X86_EFLAGS_MODIFY_IF = (1UL shl 7)
+@JsStatic internal val X86_EFLAGS_MODIFY_DF = (1UL shl 8)
+@JsStatic internal val X86_EFLAGS_MODIFY_NT = (1UL shl 9)
+@JsStatic internal val X86_EFLAGS_MODIFY_RF = (1UL shl 10)
+@JsStatic internal val X86_EFLAGS_PRIOR_OF = (1UL shl 11)
+@JsStatic internal val X86_EFLAGS_PRIOR_SF = (1UL shl 12)
+@JsStatic internal val X86_EFLAGS_PRIOR_ZF = (1UL shl 13)
+@JsStatic internal val X86_EFLAGS_PRIOR_AF = (1UL shl 14)
+@JsStatic internal val X86_EFLAGS_PRIOR_PF = (1UL shl 15)
+@JsStatic internal val X86_EFLAGS_PRIOR_CF = (1UL shl 16)
+@JsStatic internal val X86_EFLAGS_PRIOR_TF = (1UL shl 17)
+@JsStatic internal val X86_EFLAGS_PRIOR_IF = (1UL shl 18)
+@JsStatic internal val X86_EFLAGS_PRIOR_DF = (1UL shl 19)
+@JsStatic internal val X86_EFLAGS_PRIOR_NT = (1UL shl 20)
+@JsStatic internal val X86_EFLAGS_RESET_OF = (1UL shl 21)
+@JsStatic internal val X86_EFLAGS_RESET_CF = (1UL shl 22)
+@JsStatic internal val X86_EFLAGS_RESET_DF = (1UL shl 23)
+@JsStatic internal val X86_EFLAGS_RESET_IF = (1UL shl 24)
+@JsStatic internal val X86_EFLAGS_RESET_SF = (1UL shl 25)
+@JsStatic internal val X86_EFLAGS_RESET_AF = (1UL shl 26)
+@JsStatic internal val X86_EFLAGS_RESET_TF = (1UL shl 27)
+@JsStatic internal val X86_EFLAGS_RESET_NT = (1UL shl 28)
+@JsStatic internal val X86_EFLAGS_RESET_PF = (1UL shl 29)
+@JsStatic internal val X86_EFLAGS_SET_CF = (1UL shl 30)
+@JsStatic internal val X86_EFLAGS_SET_DF = (1UL shl 31)
+@JsStatic internal val X86_EFLAGS_SET_IF = (1UL shl 32)
+@JsStatic internal val X86_EFLAGS_TEST_OF = (1UL shl 33)
+@JsStatic internal val X86_EFLAGS_TEST_SF = (1UL shl 34)
+@JsStatic internal val X86_EFLAGS_TEST_ZF = (1UL shl 35)
+@JsStatic internal val X86_EFLAGS_TEST_PF = (1UL shl 36)
+@JsStatic internal val X86_EFLAGS_TEST_CF = (1UL shl 37)
+@JsStatic internal val X86_EFLAGS_TEST_NT = (1UL shl 38)
+@JsStatic internal val X86_EFLAGS_TEST_DF = (1UL shl 39)
+@JsStatic internal val X86_EFLAGS_UNDEFINED_OF = (1UL shl 40)
+@JsStatic internal val X86_EFLAGS_UNDEFINED_SF = (1UL shl 41)
+@JsStatic internal val X86_EFLAGS_UNDEFINED_ZF = (1UL shl 42)
+@JsStatic internal val X86_EFLAGS_UNDEFINED_PF = (1UL shl 43)
+@JsStatic internal val X86_EFLAGS_UNDEFINED_AF = (1UL shl 44)
+@JsStatic internal val X86_EFLAGS_UNDEFINED_CF = (1UL shl 45)
+@JsStatic internal val X86_EFLAGS_RESET_RF = (1UL shl 46)
+@JsStatic internal val X86_EFLAGS_TEST_RF = (1UL shl 47)
+@JsStatic internal val X86_EFLAGS_TEST_IF = (1UL shl 48)
+@JsStatic internal val X86_EFLAGS_TEST_TF = (1UL shl 49)
+@JsStatic internal val X86_EFLAGS_TEST_AF = (1UL shl 50)
+@JsStatic internal val X86_EFLAGS_RESET_ZF = (1UL shl 51)
+@JsStatic internal val X86_EFLAGS_SET_OF = (1UL shl 52)
+@JsStatic internal val X86_EFLAGS_SET_SF = (1UL shl 53)
+@JsStatic internal val X86_EFLAGS_SET_ZF = (1UL shl 54)
+@JsStatic internal val X86_EFLAGS_SET_AF = (1UL shl 55)
+@JsStatic internal val X86_EFLAGS_SET_PF = (1UL shl 56)
+@JsStatic internal val X86_EFLAGS_RESET_0F = (1UL shl 57)
+@JsStatic internal val X86_EFLAGS_RESET_AC = (1UL shl 58)

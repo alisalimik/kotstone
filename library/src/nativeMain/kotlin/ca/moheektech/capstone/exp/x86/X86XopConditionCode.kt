@@ -5,13 +5,13 @@ import ca.moheektech.capstone.internal.*
 
 actual enum class X86XopConditionCode(override val value: UInt) : INumericEnum {
 
-  CC_INVALID(X86_XOP_CC_INVALID), // /< Uninitialized.
-  CC_LT(X86_XOP_CC_LT),
-  CC_LE(X86_XOP_CC_LE),
-  CC_GT(X86_XOP_CC_GT),
-  CC_GE(X86_XOP_CC_GE),
-  CC_EQ(X86_XOP_CC_EQ),
-  CC_NEQ(X86_XOP_CC_NEQ),
-  CC_FALSE(X86_XOP_CC_FALSE),
-  CC_TRUE(X86_XOP_CC_TRUE),
+  INVALID(X86_XOP_CC_INVALID), // /< Uninitialized.
+  LT(X86_XOP_CC_LT),
+  LE(X86_XOP_CC_LE),
+  GT(X86_XOP_CC_GT),
+  GE(X86_XOP_CC_GE),
+  EQ(X86_XOP_CC_EQ),
+  NEQ(X86_XOP_CC_NEQ),
+  FALSE(X86_XOP_CC_FALSE),
+  TRUE(X86_XOP_CC_TRUE),
 }

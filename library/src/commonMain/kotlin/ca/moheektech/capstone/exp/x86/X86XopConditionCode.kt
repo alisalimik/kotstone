@@ -5,13 +5,13 @@ import ca.moheektech.capstone.exp.INumericEnum
 /** Capstone X86 XOP condition code. */
 expect enum class X86XopConditionCode : INumericEnum {
 
-  CC_INVALID, /// < Uninitialized.
-  CC_LT,
-  CC_LE,
-  CC_GT,
-  CC_GE,
-  CC_EQ,
-  CC_NEQ,
-  CC_FALSE,
-  CC_TRUE,
+  INVALID, /// < Uninitialized.
+  LT,
+  LE,
+  GT,
+  GE,
+  EQ,
+  NEQ,
+  FALSE,
+  TRUE,
 }

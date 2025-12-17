@@ -1,8 +1,7 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone.api
 
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
 
 /**
@@ -13,7 +12,6 @@ import ca.moheektech.capstone.internal.ExportedApi
  * @property offset Current byte offset in the code buffer
  * @property address Current virtual address
  */
-
 data class DisassemblyPosition(var offset: Int = 0, var address: Long = 0) {
   /**
    * Advance position by the given number of bytes.

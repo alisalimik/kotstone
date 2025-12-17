@@ -1,5 +1,5 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone
 
 import ca.moheektech.capstone.arch.ArchDetail
@@ -7,10 +7,8 @@ import ca.moheektech.capstone.arch.ArmInstructionDetail
 import ca.moheektech.capstone.arch.ArmOperand
 import ca.moheektech.capstone.enums.InstructionGroup
 import ca.moheektech.capstone.exp.arm.*
-import ca.moheektech.capstone.model.InstructionDetail
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
-
+import ca.moheektech.capstone.model.InstructionDetail
 
 data class ArmInstruction(
     override val id: Int,

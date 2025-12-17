@@ -1,30 +1,14 @@
-
-@file:ExportedApi
 package ca.moheektech.capstone.arch
 
 import ca.moheektech.capstone.enums.AccessType
-import ca.moheektech.capstone.exp.arm.*
-import ca.moheektech.capstone.model.Register
-import kotlin.js.ExperimentalJsExport
+import ca.moheektech.capstone.exp.arm.ArmOpType
+import ca.moheektech.capstone.exp.arm.ArmSetEndType
+import ca.moheektech.capstone.exp.arm.ArmShifter
 import ca.moheektech.capstone.internal.ExportedApi
-
-/** ARM instruction details. */
-
-data class ArmInstructionDetail(
-    val usermode: Boolean = false,
-    val vectorSize: Int = 0,
-    val vectorData: ArmVectorDataType = ArmVectorDataType.INVALID,
-    val cpsMode: ArmCpsModeType = ArmCpsModeType.INVALID,
-    val cpsFlag: ArmCpsFlagType = ArmCpsFlagType.INVALID,
-    val cc: ArmConditionCode = ArmConditionCode.Invalid,
-    val updateFlags: Boolean = false,
-    val writeback: Boolean = false,
-    val memBarrier: ArmMemoryBarrierOption = ArmMemoryBarrierOption.RESERVED_0, // Default?
-    val operands: List<ArmOperand> = emptyList()
-)
+import ca.moheektech.capstone.model.Register
 
 /** ARM instruction operand. */
-
+@ExportedApi
 data class ArmOperand(
     val type: ArmOpType,
     val access: AccessType = AccessType.INVALID,
@@ -58,16 +42,4 @@ data class ArmOperand(
 
     /** NEON lane index */
     val neonLane: Byte = -1
-)
-
-/** ARM memory operand. */
-
-data class ArmMemoryOperand(
-    val base: Register? = null,
-    val index: Register? = null,
-    val scale: Int = 1,
-    val disp: Int = 0,
-
-    /** Lshift for memory index */
-    val lshift: Int = 0
 )

@@ -2,8 +2,6 @@ package ca.moheektech.capstone.error
 
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.Mode
-import kotlin.js.ExperimentalJsExport
-import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Result type for Capstone operations.
@@ -30,7 +28,6 @@ typealias CapstoneResult<T> = Result<T>
  * val instructions = engine.disassemble(code).getOrThrow()
  * ```
  */
-
 fun <T> CapstoneResult<T>.getOrThrow(): T = getOrElse { error ->
   throw when (error) {
     is CapstoneError -> error

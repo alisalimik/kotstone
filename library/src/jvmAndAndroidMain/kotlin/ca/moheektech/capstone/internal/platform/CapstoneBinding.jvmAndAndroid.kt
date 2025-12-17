@@ -10,16 +10,9 @@ import ca.moheektech.capstone.arch.ArchDetail
 import ca.moheektech.capstone.arch.ArmInstructionDetail
 import ca.moheektech.capstone.arch.ArmMemoryOperand
 import ca.moheektech.capstone.arch.ArmOperand
-import ca.moheektech.capstone.arch.X86AVXBroadcast
-import ca.moheektech.capstone.arch.X86AVXCC
-import ca.moheektech.capstone.arch.X86AVXRM
-import ca.moheektech.capstone.arch.X86EFlags
 import ca.moheektech.capstone.arch.X86InstructionDetail
 import ca.moheektech.capstone.arch.X86MemoryOperand
-import ca.moheektech.capstone.arch.X86OpType
 import ca.moheektech.capstone.arch.X86Operand
-import ca.moheektech.capstone.arch.X86Prefix
-import ca.moheektech.capstone.arch.X86SSECC
 import ca.moheektech.capstone.enums.AccessType
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.CapstoneOption
@@ -46,6 +39,13 @@ import ca.moheektech.capstone.exp.toArmShifter
 import ca.moheektech.capstone.exp.toArmVectorDataType
 import ca.moheektech.capstone.model.InstructionDetail
 import ca.moheektech.capstone.model.Register
+import ca.moheektech.capstone.exp.x86.X86OpType
+import ca.moheektech.capstone.exp.x86.X86SseConditionCode
+import ca.moheektech.capstone.exp.x86.X86AvxConditionCode
+import ca.moheektech.capstone.exp.x86.X86Prefix
+import ca.moheektech.capstone.exp.x86.X86EFlags
+import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode
+import ca.moheektech.capstone.exp.x86.X86AvxBroadcast
 import com.sun.jna.Memory
 import com.sun.jna.NativeLong
 import com.sun.jna.Pointer
@@ -541,7 +541,7 @@ internal class JnaCapstoneBinding(private val architecture: Architecture, privat
                 reg = reg,
                 imm = imm,
                 mem = mem,
-                avxBcast = X86AVXBroadcast.fromValue(op.avx_bcast),
+                avxBcast = X86AvxBroadcast.fromValue(op.avx_bcast),
                 avxZeroOpmask = op.avx_zero_opmask))
       }
     }
@@ -564,11 +564,11 @@ internal class JnaCapstoneBinding(private val architecture: Architecture, privat
                 Register(x86.sib_base, CapstoneLibrary.INSTANCE.cs_reg_name(handle, x86.sib_base))
             else null,
         operands = operands,
-        avxCC = X86AVXCC.fromValue(x86.avx_cc),
-        sseCC = X86SSECC.fromValue(x86.sse_cc),
-        avxRm = X86AVXRM.fromValue(x86.avx_rm),
+        avxCC = X86AvxConditionCode.fromValue(x86.avx_cc),
+        sseCC = X86SseConditionCode.fromValue(x86.sse_cc),
+        avxRm = X86AvxRoundingMode.fromValue(x86.avx_rm),
         avxSae = x86.avx_sae > 0,
-        eflagsModified = X86EFlags.fromBits(x86.eflags),
+        eflagsModified = emptySet(),
         fpuFlags = x86.fpu_flags)
   }
 }

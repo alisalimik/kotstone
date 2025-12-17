@@ -1,8 +1,7 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone
 
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
 
 /**
@@ -16,7 +15,6 @@ import ca.moheektech.capstone.internal.ExportedApi
  * @property opStr Operands string representation (e.g., "rax, rbx")
  * @property detail Detailed instruction information (only available when detail mode is enabled)
  */
-
 enum class CsArch(val value: Int) {
   ARM(0),
   ARM64(1),

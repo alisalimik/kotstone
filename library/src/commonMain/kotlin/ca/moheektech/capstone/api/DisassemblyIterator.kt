@@ -1,11 +1,10 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone.api
 
 import ca.moheektech.capstone.Instruction
-import ca.moheektech.capstone.internal.platform.CapstoneBinding
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
+import ca.moheektech.capstone.internal.platform.CapstoneBinding
 
 /**
  * Iterator for memory-efficient instruction disassembly.
@@ -25,7 +24,6 @@ import ca.moheektech.capstone.internal.ExportedApi
  * }
  * ```
  */
-
 class DisassemblyIterator
 internal constructor(
     private val binding: CapstoneBinding,
@@ -107,15 +105,6 @@ internal constructor(
   fun toList(): List<Instruction> = buildList {
     while (hasNext()) {
       add(next())
-    }
-  }
-}
-
-/** Extension to easily iterate with forEach. */
-inline fun DisassemblyIterator.forEach(action: (Instruction) -> Unit) {
-  use {
-    for (instruction in this) {
-      action(instruction)
     }
   }
 }

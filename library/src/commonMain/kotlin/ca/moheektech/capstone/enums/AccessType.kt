@@ -1,5 +1,5 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone.enums
 
 import ca.moheektech.capstone.internal.ExportedApi
@@ -10,7 +10,6 @@ import kotlin.js.JsStatic
  *
  * Indicates how an operand is accessed by an instruction.
  */
-
 enum class AccessType(val value: Int) {
   /** Invalid/unknown access */
   INVALID(0),
@@ -45,11 +44,9 @@ enum class AccessType(val value: Int) {
         }
 
     /** Check if value represents read access */
-    @JsStatic
-    fun isRead(value: Int): Boolean = value and READ.value != 0
+    @JsStatic fun isRead(value: Int): Boolean = value and READ.value != 0
 
     /** Check if value represents write access */
-    @JsStatic
-    fun isWrite(value: Int): Boolean = value and WRITE.value != 0
+    @JsStatic fun isWrite(value: Int): Boolean = value and WRITE.value != 0
   }
 }

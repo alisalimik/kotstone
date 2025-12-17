@@ -47,19 +47,3 @@ sealed class ArchDetail {
   /** Generic/unknown architecture details */
   data class Generic(val detail: GenericDetail) : ArchDetail()
 }
-
-/**
- * Helper extension to safely cast ArchDetail to specific type.
- *
- * Example:
- * ```kotlin
- * instruction.detail?.archDetail?.asType<ArchDetail.AArch64>()?.let { aarch64 ->
- *     // Use aarch64.detail
- * }
- * ```
- */
-inline fun <reified T : ArchDetail> ArchDetail.asType(): T? = this as? T
-
-/** Generic architecture detail placeholder for architectures without specialized support. */
-@ExportedApi
-data class GenericDetail(val raw: String = "")

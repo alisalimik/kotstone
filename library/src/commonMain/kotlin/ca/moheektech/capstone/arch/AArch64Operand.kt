@@ -1,33 +1,17 @@
-
-@file:ExportedApi
 package ca.moheektech.capstone.arch
 
 import ca.moheektech.capstone.enums.AccessType
-import ca.moheektech.capstone.exp.aarch64.*
-import ca.moheektech.capstone.model.Register
-import kotlin.js.ExperimentalJsExport
+import ca.moheektech.capstone.exp.aarch64.AArch64Db
+import ca.moheektech.capstone.exp.aarch64.AArch64Extender
+import ca.moheektech.capstone.exp.aarch64.AArch64OpType
+import ca.moheektech.capstone.exp.aarch64.AArch64Prfm
+import ca.moheektech.capstone.exp.aarch64.AArch64Shifter
+import ca.moheektech.capstone.exp.aarch64.AArch64VectorLayout
 import ca.moheektech.capstone.internal.ExportedApi
-
-/**
- * AArch64 (ARM64) instruction details.
- *
- * @property cc Condition code for conditional instructions
- * @property updateFlags True if instruction updates condition flags
- * @property writeback True if instruction uses writeback addressing
- * @property postIndex True if post-indexed, false if pre-indexed
- * @property operands List of operands for this instruction
- */
-
-data class AArch64InstructionDetail(
-    val cc: AArch64ConditionCode = AArch64ConditionCode.Invalid,
-    val updateFlags: Boolean = false,
-    val writeback: Boolean = false,
-    val postIndex: Boolean = false,
-    val operands: List<AArch64Operand> = emptyList()
-)
+import ca.moheektech.capstone.model.Register
 
 /** AArch64 instruction operand. */
-
+@ExportedApi
 data class AArch64Operand(
     val type: AArch64OpType,
     val access: AccessType = AccessType.INVALID,
@@ -67,12 +51,4 @@ data class AArch64Operand(
 
     /** True if this operand is part of a register/vector list */
     val isListMember: Boolean = false
-)
-
-/** AArch64 memory operand. */
-
-data class AArch64MemoryOperand(
-    val base: Register? = null,
-    val index: Register? = null,
-    val disp: Long = 0
 )

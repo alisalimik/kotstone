@@ -1,5 +1,5 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone.error
 
 import ca.moheektech.capstone.internal.ExportedApi
@@ -7,7 +7,6 @@ import kotlin.js.JsStatic
 import kotlin.jvm.JvmStatic
 
 /** Capstone error codes matching cs_err enum from capstone.h */
-
 enum class ErrorCode(val value: Int) {
   /** No error - operation was successful */
   OK(0),

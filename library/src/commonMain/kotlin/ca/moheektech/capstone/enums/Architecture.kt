@@ -1,5 +1,5 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone.enums
 
 import ca.moheektech.capstone.internal.ExportedApi
@@ -11,7 +11,6 @@ import kotlin.jvm.JvmStatic
  *
  * Maps to cs_arch enum from capstone.h
  */
-
 enum class Architecture(val value: Int) {
   /** ARM architecture (including Thumb, Thumb-2) */
   ARM(0),

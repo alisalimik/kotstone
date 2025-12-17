@@ -1,11 +1,12 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone
 
 import ca.moheektech.capstone.arch.ArchDetail
 import ca.moheektech.capstone.arch.X86InstructionDetail
 import ca.moheektech.capstone.arch.X86Operand
 import ca.moheektech.capstone.enums.InstructionGroup
+import ca.moheektech.capstone.exp.x86.X86OpType
 import ca.moheektech.capstone.internal.ExportedApi
 import ca.moheektech.capstone.model.InstructionDetail
 
@@ -35,7 +36,7 @@ data class X86Instruction(
     get() = x86.operands
 
   val imm: Long?
-    get() = operands.firstOrNull { it.type == ca.moheektech.capstone.arch.X86OpType.IMM }?.imm
+    get() = operands.firstOrNull { it.type == X86OpType.IMM }?.imm
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

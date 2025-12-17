@@ -1,5 +1,5 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone.api
 
 import ca.moheektech.capstone.Arm64Instruction
@@ -12,11 +12,10 @@ import ca.moheektech.capstone.enums.CapstoneOption
 import ca.moheektech.capstone.enums.Mode
 import ca.moheektech.capstone.error.CapstoneResult
 import ca.moheektech.capstone.error.ErrorCode
+import ca.moheektech.capstone.internal.ExportedApi
 import ca.moheektech.capstone.internal.platform.CapstoneBinding
 import ca.moheektech.capstone.internal.platform.getPlatformVersion
 import ca.moheektech.capstone.internal.platform.isPlatformSupported
-import kotlin.js.ExperimentalJsExport
-import ca.moheektech.capstone.internal.ExportedApi
 import kotlin.js.JsName
 
 /**
@@ -42,7 +41,6 @@ import kotlin.js.JsName
  * @property architecture Target architecture being disassembled
  * @property mode Disassembly mode flags
  */
-
 class CapstoneEngine
 internal constructor(
     val architecture: Architecture,

@@ -2,8 +2,6 @@ package ca.moheektech.capstone.exp.aarch64
 
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
 
 @ExportedApi
 actual enum class AArch64Db(override val value: Int) : INumericEnum {

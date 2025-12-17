@@ -1,5 +1,3 @@
-
-@file:ExportedApi
 package ca.moheektech.capstone.enums
 
 import ca.moheektech.capstone.internal.ExportedApi
@@ -15,7 +13,7 @@ import ca.moheektech.capstone.internal.ExportedApi
  * engine.setOption(CapstoneOption.Syntax(Syntax.INTEL))
  * ```
  */
-
+@ExportedApi
 sealed class CapstoneOption {
   /**
    * Enable or disable detailed instruction information.

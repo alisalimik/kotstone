@@ -18,6 +18,13 @@ import ca.moheektech.capstone.exp.toArmShifter
 import ca.moheektech.capstone.exp.toArmVectorDataType
 import ca.moheektech.capstone.internal.*
 import ca.moheektech.capstone.model.*
+import ca.moheektech.capstone.exp.x86.X86OpType
+import ca.moheektech.capstone.exp.x86.X86SseConditionCode
+import ca.moheektech.capstone.exp.x86.X86AvxConditionCode
+import ca.moheektech.capstone.exp.x86.X86Prefix
+import ca.moheektech.capstone.exp.x86.X86EFlags
+import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode
+import ca.moheektech.capstone.exp.x86.X86AvxBroadcast
 import kotlinx.cinterop.*
 import platform.posix.size_t
 import platform.posix.size_tVar
@@ -541,7 +548,7 @@ internal class NativeCapstoneBinding(
                 reg = reg,
                 imm = imm,
                 mem = mem,
-                avxBcast = X86AVXBroadcast.fromValue(op.avx_bcast.toInt()),
+                avxBcast = X86AvxBroadcast.fromValue(op.avx_bcast.toInt()),
                 avxZeroOpmask = op.avx_zero_opmask))
       }
     }
@@ -567,11 +574,11 @@ internal class NativeCapstoneBinding(
                     x86.sib_base.toInt(), cs_reg_name(handle, x86.sib_base.convert())?.toKString())
             else null,
         operands = operands,
-        avxCC = X86AVXCC.fromValue(x86.avx_cc.convert()),
-        sseCC = X86SSECC.fromValue(x86.sse_cc.convert()),
-        avxRm = X86AVXRM.fromValue(x86.avx_rm.convert()),
+        avxCC = X86AvxConditionCode.fromValue(x86.avx_cc.convert()),
+        sseCC = X86SseConditionCode.fromValue(x86.sse_cc.convert()),
+        avxRm = X86AvxRoundingMode.fromValue(x86.avx_rm.convert()),
         avxSae = x86.avx_sae,
-        eflagsModified = X86EFlags.fromBits(x86.eflags.convert()),
+        eflagsModified = emptySet(),
         fpuFlags = x86.fpu_flags.convert())
   }
 }

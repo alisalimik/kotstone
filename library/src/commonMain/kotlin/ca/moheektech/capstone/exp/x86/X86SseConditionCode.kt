@@ -4,14 +4,17 @@ import ca.moheektech.capstone.exp.INumericEnum
 
 /** Capstone X86 SSE condition code. */
 expect enum class X86SseConditionCode : INumericEnum {
+  INVALID,
+  EQ,
+  LT,
+  LE,
+  UNORD,
+  NEQ,
+  NLT,
+  NLE,
+  ORD;
 
-  CC_INVALID, /// < Uninitialized.
-  CC_EQ,
-  CC_LT,
-  CC_LE,
-  CC_UNORD,
-  CC_NEQ,
-  CC_NLT,
-  CC_NLE,
-  CC_ORD,
+    companion object {
+        fun fromValue(value: Int): X86SseConditionCode
+    }
 }

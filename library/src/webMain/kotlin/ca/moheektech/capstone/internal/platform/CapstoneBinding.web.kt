@@ -10,16 +10,16 @@ import ca.moheektech.capstone.arch.ArchDetail
 import ca.moheektech.capstone.arch.ArmInstructionDetail
 import ca.moheektech.capstone.arch.ArmMemoryOperand
 import ca.moheektech.capstone.arch.ArmOperand
-import ca.moheektech.capstone.arch.X86AVXBroadcast
-import ca.moheektech.capstone.arch.X86AVXCC
-import ca.moheektech.capstone.arch.X86AVXRM
-import ca.moheektech.capstone.arch.X86EFlags
+import ca.moheektech.capstone.exp.x86.X86OpType
+import ca.moheektech.capstone.exp.x86.X86SseConditionCode
+import ca.moheektech.capstone.exp.x86.X86AvxConditionCode
+import ca.moheektech.capstone.exp.x86.X86Prefix
+import ca.moheektech.capstone.exp.x86.X86EFlags
+import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode
+import ca.moheektech.capstone.exp.x86.X86AvxBroadcast
 import ca.moheektech.capstone.arch.X86InstructionDetail
 import ca.moheektech.capstone.arch.X86MemoryOperand
-import ca.moheektech.capstone.arch.X86OpType
 import ca.moheektech.capstone.arch.X86Operand
-import ca.moheektech.capstone.arch.X86Prefix
-import ca.moheektech.capstone.arch.X86SSECC
 import ca.moheektech.capstone.enums.AccessType
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.CapstoneOption
@@ -702,11 +702,11 @@ internal class WasmCapstoneBinding(private val architecture: Architecture, priva
         sibScale = sibScale,
         sibBase = if (sibBaseId != 0) Register(sibBaseId, regName(sibBaseId)) else null,
         operands = operands,
-        avxCC = X86AVXCC.fromValue(avxCcVal),
-        sseCC = X86SSECC.fromValue(sseCCVal),
-        avxRm = X86AVXRM.fromValue(avxRmVal),
+        avxCC = X86AvxConditionCode.fromValue(avxCcVal),
+        sseCC = X86SseConditionCode.fromValue(sseCCVal),
+        avxRm = X86AvxRoundingMode.fromValue(avxRmVal),
         avxSae = avxSae,
-        eflagsModified = X86EFlags.fromBits(eflagsVal)
+        eflagsModified = emptySet()
         // eflagsTested ?
         )
   }
@@ -740,7 +740,7 @@ internal class WasmCapstoneBinding(private val architecture: Architecture, priva
         reg = reg,
         imm = imm,
         mem = mem,
-        avxBcast = X86AVXBroadcast.fromValue(avxBcastVal),
+        avxBcast = X86AvxBroadcast.fromValue(avxBcastVal),
         avxZeroOpmask = avxZeroOpmask)
   }
 

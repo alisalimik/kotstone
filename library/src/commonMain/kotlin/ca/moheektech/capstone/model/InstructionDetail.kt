@@ -1,10 +1,9 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone.model
 
 import ca.moheektech.capstone.arch.ArchDetail
 import ca.moheektech.capstone.enums.InstructionGroup
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
 
 /**
@@ -18,7 +17,6 @@ import ca.moheektech.capstone.internal.ExportedApi
  * @property writeback True if instruction has writeback operands
  * @property archDetail Architecture-specific details (type-safe via sealed class)
  */
-
 data class InstructionDetail(
     val regsRead: List<Register> = emptyList(),
     val regsWritten: List<Register> = emptyList(),

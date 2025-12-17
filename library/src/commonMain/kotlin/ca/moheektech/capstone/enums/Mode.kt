@@ -1,5 +1,5 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone.enums
 
 import ca.moheektech.capstone.internal.ExportedApi
@@ -21,7 +21,6 @@ import kotlin.jvm.JvmStatic
  * val mode = Mode.THUMB or Mode.V8
  * ```
  */
-
 enum class Mode(val value: Int) {
   /** Little-endian mode (default) */
   LITTLE_ENDIAN(0),

@@ -2,8 +2,6 @@ package ca.moheektech.capstone.exp.arm
 
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
 
 @ExportedApi
 actual enum class ArmOpType(override val value: Int) : INumericEnum {

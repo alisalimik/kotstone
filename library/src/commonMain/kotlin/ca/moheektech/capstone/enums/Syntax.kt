@@ -1,5 +1,5 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone.enums
 
 import ca.moheektech.capstone.internal.ExportedApi
@@ -11,7 +11,6 @@ import kotlin.jvm.JvmStatic
  *
  * Used with CS_OPT_SYNTAX option to configure output syntax.
  */
-
 enum class Syntax(val value: Int) {
   /** Default syntax (architecture-dependent) */
   DEFAULT(0),

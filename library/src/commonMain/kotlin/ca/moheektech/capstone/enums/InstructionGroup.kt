@@ -1,5 +1,5 @@
-
 @file:ExportedApi
+
 package ca.moheektech.capstone.enums
 
 import ca.moheektech.capstone.internal.ExportedApi
@@ -12,7 +12,6 @@ import kotlin.jvm.JvmStatic
  * Groups classify instructions by their behavior (jump, call, return, etc.) Maps to cs_group_type
  * enum from capstone.h
  */
-
 enum class InstructionGroup(val value: Int) {
   /** Invalid/unknown group */
   INVALID(0),
