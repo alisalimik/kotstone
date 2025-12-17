@@ -90,8 +90,10 @@ internal expect fun <T : JsAny> JsAny.unsafeCast(): T
  *
  * This implementation uses Emscripten-compiled Capstone via JS interop.
  */
-internal actual fun createPlatformBinding(architecture: Architecture, mode: BitField<Mode>): CapstoneBinding =
-    WasmCapstoneBinding(architecture, mode)
+internal actual fun createPlatformBinding(
+    architecture: Architecture,
+    mode: BitField<Mode>
+): CapstoneBinding = WasmCapstoneBinding(architecture, mode)
 
 internal actual fun getPlatformVersion(): Pair<Int, Int> {
   // This will be called after initialization
@@ -131,8 +133,10 @@ internal fun getModuleInstance(): CapstoneModuleInstance {
 }
 
 /** Wasm/JS-based Capstone binding implementation */
-internal class WasmCapstoneBinding(private val architecture: Architecture, private val mode: BitField<Mode>) :
-    CapstoneBinding {
+internal class WasmCapstoneBinding(
+    private val architecture: Architecture,
+    private val mode: BitField<Mode>
+) : CapstoneBinding {
 
   private val module: CapstoneModuleInstance = getModuleInstance()
   private val handlePtr: Int = module._malloc(4) // Allocate space for size_t handle
@@ -707,8 +711,7 @@ internal class WasmCapstoneBinding(private val architecture: Architecture, priva
         avxRm = X86AvxRoundingMode.fromValue(avxRmVal),
         avxSae = avxSae,
         eflags = BitField.fromValue(eflagsVal.toULong()),
-        fpuFlags =
-            0 // Unresolved FPU flags in Web binding? Wait, struct has 64 bytes for operands.
+        fpuFlags = 0 // Unresolved FPU flags in Web binding? Wait, struct has 64 bytes for operands.
         // Check if fpu_flags exists? Step 69 says opCount at ptr+60.
         // The struct seems to end eflags at 60.
         // Let's recheck cs_x86 layout.

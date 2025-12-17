@@ -35,8 +35,10 @@ import platform.posix.size_tVar
  * This implementation directly calls Capstone C API via cinterop bindings.
  */
 @OptIn(UnsafeNumber::class, ExperimentalForeignApi::class)
-internal actual fun createPlatformBinding(architecture: Architecture, mode: BitField<Mode>): CapstoneBinding =
-    NativeCapstoneBinding(architecture, mode)
+internal actual fun createPlatformBinding(
+    architecture: Architecture,
+    mode: BitField<Mode>
+): CapstoneBinding = NativeCapstoneBinding(architecture, mode)
 
 @OptIn(UnsafeNumber::class, ExperimentalForeignApi::class)
 internal actual fun getPlatformVersion(): Pair<Int, Int> {

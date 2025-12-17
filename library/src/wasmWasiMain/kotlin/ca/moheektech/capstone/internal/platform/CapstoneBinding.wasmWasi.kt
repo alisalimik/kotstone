@@ -3,6 +3,7 @@ package ca.moheektech.capstone.internal.platform
 import ca.moheektech.capstone.Instruction
 import ca.moheektech.capstone.InternalInstruction
 import ca.moheektech.capstone.api.DisassemblyPosition
+import ca.moheektech.capstone.bit.BitField
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.CapstoneOption
 import ca.moheektech.capstone.enums.Mode
@@ -15,7 +16,7 @@ import ca.moheektech.capstone.internal.*
  */
 internal class WasmWasiCapstoneBinding(
     private val architecture: Architecture,
-    private val mode: Mode
+    private val mode: BitField<Mode>
 ) : CapstoneBinding {
 
   private val handlePtr: Int = _malloc(4)
@@ -23,7 +24,7 @@ internal class WasmWasiCapstoneBinding(
   private var detailEnabled = false
 
   init {
-    val err = _cs_open(architecture.value, mode.value, handlePtr)
+    val err = _cs_open(architecture.value, mode.value.toInt(), handlePtr)
     if (err != ErrorCode.OK.value) {
       val errorMsg = CapstoneWasi.getErrorName(err)
       _free(handlePtr)
@@ -221,12 +222,12 @@ internal class WasmWasiCapstoneBinding(
 
   override fun regName(regId: Int): String? {
     val s = CapstoneWasi.getRegName(handle, regId)
-    return if (s.isNotEmpty()) s else null
+    return s.ifEmpty { null }
   }
 
   override fun insnName(insnId: Int): String? {
     val s = CapstoneWasi.getInsnName(handle, insnId)
-    return if (s.isNotEmpty()) s else null
+    return s.ifEmpty { null }
   }
 
   override fun groupName(groupId: Int): String? {
@@ -239,8 +240,10 @@ internal class WasmWasiCapstoneBinding(
   }
 }
 
-internal actual fun createPlatformBinding(architecture: Architecture, mode: Mode): CapstoneBinding =
-    WasmWasiCapstoneBinding(architecture, mode)
+internal actual fun createPlatformBinding(
+    architecture: Architecture,
+    mode: BitField<Mode>
+): CapstoneBinding = WasmWasiCapstoneBinding(architecture, mode)
 
 internal actual fun isPlatformSupported(arch: Architecture): Boolean {
   // Need _cs_support exposed
