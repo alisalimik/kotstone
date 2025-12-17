@@ -35,11 +35,9 @@ internal external fun _cs_option(handle: Int, type: Int, value: Int): Int
 @WasmImport(MODULE, "_cs_strerror")
 internal external fun _cs_strerror(code: Int): Int // Returns char*
 
-@WasmImport(MODULE, "_cs_support")
-internal external fun _cs_support(query: Int): Boolean
+@WasmImport(MODULE, "_cs_support") internal external fun _cs_support(query: Int): Boolean
 
-@WasmImport(MODULE, "_cs_version")
-internal external fun _cs_version(major: Int, minor: Int): Int
+@WasmImport(MODULE, "_cs_version") internal external fun _cs_version(major: Int, minor: Int): Int
 
 // Disassembly
 @WasmImport(MODULE, "_cs_disasm")

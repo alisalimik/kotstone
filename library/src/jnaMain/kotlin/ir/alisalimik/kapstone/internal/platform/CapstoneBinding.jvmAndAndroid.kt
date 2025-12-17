@@ -1,5 +1,12 @@
 package ir.alisalimik.kapstone.internal.platform
 
+import com.sun.jna.Memory
+import com.sun.jna.NativeLong
+import com.sun.jna.Pointer
+import com.sun.jna.ptr.IntByReference
+import com.sun.jna.ptr.LongByReference
+import com.sun.jna.ptr.NativeLongByReference
+import com.sun.jna.ptr.PointerByReference
 import ir.alisalimik.kapstone.Instruction
 import ir.alisalimik.kapstone.InternalInstruction
 import ir.alisalimik.kapstone.api.DisassemblyPosition
@@ -46,13 +53,6 @@ import ir.alisalimik.kapstone.exp.x86.X86Prefix
 import ir.alisalimik.kapstone.exp.x86.X86SseConditionCode
 import ir.alisalimik.kapstone.model.InstructionDetail
 import ir.alisalimik.kapstone.model.Register
-import com.sun.jna.Memory
-import com.sun.jna.NativeLong
-import com.sun.jna.Pointer
-import com.sun.jna.ptr.IntByReference
-import com.sun.jna.ptr.LongByReference
-import com.sun.jna.ptr.NativeLongByReference
-import com.sun.jna.ptr.PointerByReference
 
 /**
  * JNA-based platform implementation for JVM and Android.

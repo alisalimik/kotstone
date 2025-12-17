@@ -22,14 +22,14 @@ kotlin {
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
-        browser {
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                    useConfigDirectory(project.file("karma.config.d"))
-                }
-            }
+      browser {
+        testTask {
+          useKarma {
+            useChromeHeadless()
+            useConfigDirectory(project.file("karma.config.d"))
+          }
         }
+      }
     }
 
     androidDeviceTest.dependencies {

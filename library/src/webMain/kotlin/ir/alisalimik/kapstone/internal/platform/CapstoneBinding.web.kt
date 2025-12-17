@@ -349,7 +349,6 @@ internal class WasmCapstoneBinding(
           } else null
         } else null
 
-
     return InternalInstruction(
         id = id,
         address = address,
