@@ -1,7 +1,9 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone
 
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Represents a disassembled instruction.
@@ -14,8 +16,7 @@ import kotlin.js.JsExport
  * @property opStr Operands string representation (e.g., "rax, rbx")
  * @property detail Detailed instruction information (only available when detail mode is enabled)
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 enum class CsArch(val value: Int) {
   ARM(0),
   ARM64(1),
@@ -44,8 +45,6 @@ enum class CsArch(val value: Int) {
   ALL(0xFFFF)
 }
 
-@OptIn(ExperimentalJsExport::class)
-@JsExport
 enum class CsMode(val value: Int) {
   LITTLE_ENDIAN(0),
   ARM(0),

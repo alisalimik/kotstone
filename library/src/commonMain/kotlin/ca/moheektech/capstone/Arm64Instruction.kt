@@ -1,3 +1,4 @@
+@file:ExportedApi
 package ca.moheektech.capstone
 
 import ca.moheektech.capstone.arch.AArch64InstructionDetail
@@ -5,13 +6,11 @@ import ca.moheektech.capstone.arch.AArch64Operand
 import ca.moheektech.capstone.arch.ArchDetail
 import ca.moheektech.capstone.enums.InstructionGroup
 import ca.moheektech.capstone.exp.aarch64.*
+import ca.moheektech.capstone.internal.ExportedApi
 import ca.moheektech.capstone.model.InstructionDetail
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
 
-/** AArch64 (ARM64) architecture-specific instruction. */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
+
 data class Arm64Instruction(
     override val id: Int,
     override val address: Long,

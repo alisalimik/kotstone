@@ -1,3 +1,5 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone.api
 
 import ca.moheektech.capstone.enums.Architecture
@@ -7,7 +9,7 @@ import ca.moheektech.capstone.enums.Syntax
 import ca.moheektech.capstone.error.getOrThrow
 import ca.moheektech.capstone.internal.platform.createPlatformBinding
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Builder for configuring and creating a Capstone disassembly engine.
@@ -35,8 +37,7 @@ import kotlin.js.JsExport
  * @property architecture Target architecture to disassemble
  * @property mode Disassembly mode flags
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 class CapstoneBuilder(private val architecture: Architecture, private val mode: Mode) {
   private val options = mutableListOf<CapstoneOption>()
 

@@ -5,8 +5,7 @@ import ca.moheektech.capstone.internal.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+@ca.moheektech.capstone.internal.ExportedApi
 actual enum class AArch64Extender(override val value: Int) : INumericEnum {
   INVALID(AARCH64_EXT_INVALID),
   UXTB(AARCH64_EXT_UXTB),

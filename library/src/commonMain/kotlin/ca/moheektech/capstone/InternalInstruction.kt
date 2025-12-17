@@ -1,16 +1,17 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone
 
 import ca.moheektech.capstone.enums.InstructionGroup
 import ca.moheektech.capstone.model.InstructionDetail
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Internal/Generic instruction implementation. Used for generic decomposition or when architecture
  * details are not fully reified.
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 data class InternalInstruction(
     override val id: Int,
     override val address: Long,

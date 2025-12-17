@@ -1,18 +1,19 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone.error
 
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.Mode
 import ca.moheektech.capstone.enums.Syntax
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Sealed class hierarchy representing all possible Capstone errors.
  *
  * Use when you need type-safe error handling with specific error information.
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 sealed class CapstoneError : Exception() {
   /** Out of memory error */
   data class OutOfMemory(override val message: String = "Out of memory") : CapstoneError()
@@ -72,8 +73,7 @@ sealed class CapstoneError : Exception() {
 }
 
 /** Convert ErrorCode to CapstoneError */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 fun ErrorCode.toError(
     arch: Architecture = Architecture.ARM,
     mode: Mode = Mode.LITTLE_ENDIAN,

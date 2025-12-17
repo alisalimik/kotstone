@@ -1,14 +1,15 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone.arch
 
 import ca.moheektech.capstone.enums.AccessType
 import ca.moheektech.capstone.exp.arm.*
 import ca.moheektech.capstone.model.Register
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /** ARM instruction details. */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 data class ArmInstructionDetail(
     val usermode: Boolean = false,
     val vectorSize: Int = 0,
@@ -23,8 +24,7 @@ data class ArmInstructionDetail(
 )
 
 /** ARM instruction operand. */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 data class ArmOperand(
     val type: ArmOpType,
     val access: AccessType = AccessType.INVALID,
@@ -61,8 +61,7 @@ data class ArmOperand(
 )
 
 /** ARM memory operand. */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 data class ArmMemoryOperand(
     val base: Register? = null,
     val index: Register? = null,

@@ -5,8 +5,7 @@ import ca.moheektech.capstone.internal.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+@ca.moheektech.capstone.internal.ExportedApi
 actual enum class ArmSetEndType(override val value: Int) : INumericEnum {
   INVALID(ARM_SETEND_INVALID), // /< Uninitialized.
   BE(ARM_SETEND_BE), // /< BE operand.

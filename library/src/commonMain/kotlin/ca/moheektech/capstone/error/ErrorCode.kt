@@ -1,11 +1,12 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone.error
 
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /** Capstone error codes matching cs_err enum from capstone.h */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 enum class ErrorCode(val value: Int) {
   /** No error - operation was successful */
   OK(0),

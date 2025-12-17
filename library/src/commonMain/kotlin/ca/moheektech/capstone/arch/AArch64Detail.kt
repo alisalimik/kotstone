@@ -1,10 +1,12 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone.arch
 
 import ca.moheektech.capstone.enums.AccessType
 import ca.moheektech.capstone.exp.aarch64.*
 import ca.moheektech.capstone.model.Register
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * AArch64 (ARM64) instruction details.
@@ -15,8 +17,7 @@ import kotlin.js.JsExport
  * @property postIndex True if post-indexed, false if pre-indexed
  * @property operands List of operands for this instruction
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 data class AArch64InstructionDetail(
     val cc: AArch64ConditionCode = AArch64ConditionCode.Invalid,
     val updateFlags: Boolean = false,
@@ -26,8 +27,7 @@ data class AArch64InstructionDetail(
 )
 
 /** AArch64 instruction operand. */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 data class AArch64Operand(
     val type: AArch64OpType,
     val access: AccessType = AccessType.INVALID,
@@ -70,8 +70,7 @@ data class AArch64Operand(
 )
 
 /** AArch64 memory operand. */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 data class AArch64MemoryOperand(
     val base: Register? = null,
     val index: Register? = null,

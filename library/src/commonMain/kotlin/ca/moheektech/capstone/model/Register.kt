@@ -1,7 +1,7 @@
 package ca.moheektech.capstone.model
 
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Represents a CPU register.
@@ -9,8 +9,7 @@ import kotlin.js.JsExport
  * @property id Register ID (architecture-specific)
  * @property name Register name (e.g., "rax", "x0", "r1")
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 data class Register(val id: Int, val name: String? = null) {
   override fun toString(): String = name ?: "reg_$id"
 }

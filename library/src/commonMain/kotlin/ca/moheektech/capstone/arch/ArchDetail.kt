@@ -1,7 +1,9 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone.arch
 
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Sealed class representing architecture-specific instruction details.
@@ -22,8 +24,7 @@ import kotlin.js.JsExport
  * }
  * ```
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 sealed class ArchDetail {
   /** AArch64 (ARM64) specific details */
   data class AArch64(val detail: AArch64InstructionDetail) : ArchDetail()
@@ -63,4 +64,4 @@ sealed class ArchDetail {
 inline fun <reified T : ArchDetail> ArchDetail.asType(): T? = this as? T
 
 /** Generic architecture detail placeholder for architectures without specialized support. */
-@OptIn(ExperimentalJsExport::class) @JsExport data class GenericDetail(val raw: String = "")
+data class GenericDetail(val raw: String = "")

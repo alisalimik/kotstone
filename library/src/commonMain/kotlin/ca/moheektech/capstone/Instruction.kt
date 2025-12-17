@@ -1,8 +1,10 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone
 
 import ca.moheektech.capstone.enums.InstructionGroup
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Represents a disassembled instruction.
@@ -10,8 +12,7 @@ import kotlin.js.JsExport
  * This is the base type for all architecture-specific instructions. Cast to specific types (e.g.,
  * [ArmInstruction], [X86Instruction]) to access detailed operands.
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 sealed interface Instruction {
   val id: Int
   val address: Long

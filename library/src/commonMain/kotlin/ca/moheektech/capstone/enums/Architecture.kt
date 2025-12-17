@@ -1,15 +1,16 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone.enums
 
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Capstone supported architectures.
  *
  * Maps to cs_arch enum from capstone.h
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 enum class Architecture(val value: Int) {
   /** ARM architecture (including Thumb, Thumb-2) */
   ARM(0),

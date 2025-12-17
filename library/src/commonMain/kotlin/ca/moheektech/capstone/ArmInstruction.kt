@@ -1,3 +1,5 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone
 
 import ca.moheektech.capstone.arch.ArchDetail
@@ -7,11 +9,9 @@ import ca.moheektech.capstone.enums.InstructionGroup
 import ca.moheektech.capstone.exp.arm.*
 import ca.moheektech.capstone.model.InstructionDetail
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
-/** ARM architecture-specific instruction. */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 data class ArmInstruction(
     override val id: Int,
     override val address: Long,

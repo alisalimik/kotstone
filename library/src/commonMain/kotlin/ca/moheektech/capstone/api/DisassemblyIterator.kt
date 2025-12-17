@@ -1,9 +1,11 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone.api
 
 import ca.moheektech.capstone.Instruction
 import ca.moheektech.capstone.internal.platform.CapstoneBinding
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Iterator for memory-efficient instruction disassembly.
@@ -23,8 +25,7 @@ import kotlin.js.JsExport
  * }
  * ```
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 class DisassemblyIterator
 internal constructor(
     private val binding: CapstoneBinding,

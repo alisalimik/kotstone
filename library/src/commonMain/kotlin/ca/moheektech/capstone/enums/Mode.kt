@@ -1,7 +1,9 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone.enums
 
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 import kotlin.js.JsName
 
 /**
@@ -18,8 +20,7 @@ import kotlin.js.JsName
  * val mode = Mode.THUMB or Mode.V8
  * ```
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 enum class Mode(val value: Int) {
   /** Little-endian mode (default) */
   LITTLE_ENDIAN(0),

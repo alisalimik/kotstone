@@ -1,7 +1,9 @@
+
+@file:ExportedApi
 package ca.moheektech.capstone.enums
 
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import ca.moheektech.capstone.internal.ExportedApi
 
 /**
  * Sealed class representing Capstone runtime options.
@@ -14,8 +16,7 @@ import kotlin.js.JsExport
  * engine.setOption(CapstoneOption.Syntax(Syntax.INTEL))
  * ```
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
+
 sealed class CapstoneOption {
   /**
    * Enable or disable detailed instruction information.

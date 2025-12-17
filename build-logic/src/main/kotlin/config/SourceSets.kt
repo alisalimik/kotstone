@@ -8,11 +8,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 fun KotlinMultiplatformExtension.configureSourceSets() {
     applyDefaultHierarchyTemplate {
         common {
-            group("web") {
-                withWasmJs()
-                withJs()
-            }
-
             group("nonNative") {
                 withJvm()
                 withAndroidTarget()
