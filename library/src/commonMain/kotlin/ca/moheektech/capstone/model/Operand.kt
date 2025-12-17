@@ -1,7 +1,6 @@
 package ca.moheektech.capstone.model
 
 import ca.moheektech.capstone.enums.AccessType
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
 
 /**
@@ -9,7 +8,7 @@ import ca.moheektech.capstone.internal.ExportedApi
  *
  * Different operand types are represented by subclasses.
  */
-
+@ExportedApi
 sealed class Operand {
   /** Access type for this operand (read, write, or both) */
   abstract val access: AccessType

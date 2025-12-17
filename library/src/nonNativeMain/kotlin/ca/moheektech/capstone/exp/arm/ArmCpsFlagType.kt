@@ -5,7 +5,7 @@ import ca.moheektech.capstone.internal.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
-@ca.moheektech.capstone.internal.ExportedApi
+@ExportedApi
 actual enum class ArmCpsFlagType(override val value: Int) : INumericEnum {
   INVALID(ARM_CPSFLAG_INVALID),
   F(ARM_CPSFLAG_F),

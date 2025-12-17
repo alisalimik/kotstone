@@ -4,6 +4,7 @@ import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
 /// Group of AArch64 instructions
+@ExportedApi
 actual enum class AArch64InstructionGroup(override val value: Int) : INumericEnum {
   INVALID(AARCH64_FEATURE_INVALID),
   JUMP(AARCH64_FEATURE_JUMP),

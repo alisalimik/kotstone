@@ -5,7 +5,7 @@ import ca.moheektech.capstone.internal.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
-@ca.moheektech.capstone.internal.ExportedApi
+@ExportedApi
 actual enum class AArch64ConditionCode(override val value: Int) : INumericEnum {
   // Meaning  Meaning
   EQ(AArch64CC_EQ), // Equal                      Equal

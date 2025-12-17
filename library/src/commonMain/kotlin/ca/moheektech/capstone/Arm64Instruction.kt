@@ -9,8 +9,6 @@ import ca.moheektech.capstone.exp.aarch64.*
 import ca.moheektech.capstone.internal.ExportedApi
 import ca.moheektech.capstone.model.InstructionDetail
 
-
-
 data class Arm64Instruction(
     override val id: Int,
     override val address: Long,

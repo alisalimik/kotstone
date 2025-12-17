@@ -6,13 +6,10 @@ import ca.moheektech.capstone.arch.ArchDetail
 import ca.moheektech.capstone.arch.X86InstructionDetail
 import ca.moheektech.capstone.arch.X86Operand
 import ca.moheektech.capstone.enums.InstructionGroup
-import ca.moheektech.capstone.exp.x86.*
-import ca.moheektech.capstone.model.InstructionDetail
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
+import ca.moheektech.capstone.model.InstructionDetail
 
 /** X86 architecture-specific instruction. */
-
 data class X86Instruction(
     override val id: Int,
     override val address: Long,

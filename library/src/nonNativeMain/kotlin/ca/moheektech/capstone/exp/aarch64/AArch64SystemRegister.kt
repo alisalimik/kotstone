@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.aarch64
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class AArch64SystemRegister(override val value: Int) : INumericEnum {
   INVALID(AARCH64_SYSREG_INVALID),
   ACCDATA_EL1(AARCH64_SYSREG_ACCDATA_EL1),

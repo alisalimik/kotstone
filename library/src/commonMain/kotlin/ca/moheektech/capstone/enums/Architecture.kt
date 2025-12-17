@@ -2,8 +2,9 @@
 @file:ExportedApi
 package ca.moheektech.capstone.enums
 
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
+import kotlin.js.JsStatic
+import kotlin.jvm.JvmStatic
 
 /**
  * Capstone supported architectures.
@@ -89,6 +90,8 @@ enum class Architecture(val value: Int) {
 
   companion object {
     /** Convert integer value to Architecture enum */
+    @JsStatic
+    @JvmStatic
     fun fromValue(value: Int): Architecture? = entries.firstOrNull { it.value == value }
   }
 }

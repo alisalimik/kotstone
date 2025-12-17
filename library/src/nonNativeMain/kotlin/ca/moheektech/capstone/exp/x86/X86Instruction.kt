@@ -2,7 +2,10 @@ package ca.moheektech.capstone.exp.x86
 
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
+import kotlin.js.JsName
 
+@ExportedApi
+@JsName("X86InstructionType")
 actual enum class X86Instruction(override val value: Int) : INumericEnum {
   INVALID(X86_INS_INVALID),
   AAA(X86_INS_AAA),

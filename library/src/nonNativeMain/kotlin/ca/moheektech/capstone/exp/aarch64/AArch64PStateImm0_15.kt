@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.aarch64
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class AArch64PStateImm0_15(override val value: Int) : INumericEnum {
   DAIFCLR(AARCH64_PSTATEIMM0_15_DAIFCLR),
   DAIFSET(AARCH64_PSTATEIMM0_15_DAIFSET),

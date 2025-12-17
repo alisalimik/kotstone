@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.arm
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class ArmSystemRegister(override val value: Int) : INumericEnum {
   APSR(ARM_MCLASSSYSREG_APSR),
   APSR_G(ARM_MCLASSSYSREG_APSR_G),

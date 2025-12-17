@@ -2,8 +2,9 @@
 @file:ExportedApi
 package ca.moheektech.capstone.enums
 
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
+import kotlin.js.JsStatic
+import kotlin.jvm.JvmStatic
 
 /**
  * Common instruction groups.
@@ -39,9 +40,13 @@ enum class InstructionGroup(val value: Int) {
 
   companion object {
     /** Convert integer value to InstructionGroup enum */
+    @JsStatic
+    @JvmStatic
     fun fromValue(value: Int): InstructionGroup? = entries.firstOrNull { it.value == value }
 
     /** Convert list of integer group IDs to InstructionGroup list */
+    @JsStatic
+    @JvmStatic
     fun fromValues(values: List<Int>): List<InstructionGroup> = values.mapNotNull { fromValue(it) }
   }
 }

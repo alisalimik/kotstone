@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.aarch64
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class AArch64ExactFpImm(override val value: Int) : INumericEnum {
 
   HALF(AARCH64_EXACTFPIMM_HALF),

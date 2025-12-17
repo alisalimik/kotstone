@@ -5,7 +5,7 @@ import ca.moheektech.capstone.internal.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
-@ca.moheektech.capstone.internal.ExportedApi
+@ExportedApi
 actual enum class AArch64OpType(override val value: Int) : INumericEnum {
   INVALID(AARCH64_OP_INVALID),
   REG(AARCH64_OP_REG), // /< = CS_OP_REG .

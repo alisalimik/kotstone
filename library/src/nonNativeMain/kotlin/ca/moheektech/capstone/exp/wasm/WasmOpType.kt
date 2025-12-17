@@ -1,6 +1,7 @@
 package ca.moheektech.capstone.exp.wasm
 
 import ca.moheektech.capstone.exp.INumericEnum
+import ca.moheektech.capstone.internal.ExportedApi
 import ca.moheektech.capstone.internal.WASM_OP_BRTABLE
 import ca.moheektech.capstone.internal.WASM_OP_IMM
 import ca.moheektech.capstone.internal.WASM_OP_INT7
@@ -11,6 +12,7 @@ import ca.moheektech.capstone.internal.WASM_OP_UINT64
 import ca.moheektech.capstone.internal.WASM_OP_VARUINT32
 import ca.moheektech.capstone.internal.WASM_OP_VARUINT64
 
+@ExportedApi
 actual enum class WasmOpType(override val value: Int) : INumericEnum {
   INVALID(WASM_OP_INVALID),
   IMM(WASM_OP_IMM),

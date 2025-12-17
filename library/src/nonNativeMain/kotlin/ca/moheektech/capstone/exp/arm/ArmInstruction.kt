@@ -2,7 +2,10 @@ package ca.moheektech.capstone.exp.arm
 
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
+import kotlin.js.JsName
 
+@ExportedApi
+@JsName("ArmInstructionType")
 actual enum class ArmInstruction(override val value: Int) : INumericEnum {
   INVALID(ARM_INS_INVALID),
   ASR(ARM_INS_ASR),

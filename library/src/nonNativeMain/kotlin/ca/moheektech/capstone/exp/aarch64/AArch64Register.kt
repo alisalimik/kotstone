@@ -4,6 +4,7 @@ import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
 /// AArch64 registers
+@ExportedApi
 actual enum class AArch64Register(override val value: Int) : INumericEnum {
 
   // generated content <AArch64GenCSRegEnum.inc> begin

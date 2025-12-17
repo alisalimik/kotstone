@@ -2,7 +2,6 @@
 @file:ExportedApi
 package ca.moheektech.capstone.enums
 
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
 
 /**

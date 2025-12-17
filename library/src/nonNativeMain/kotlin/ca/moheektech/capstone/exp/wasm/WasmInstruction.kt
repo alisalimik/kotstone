@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.wasm
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class WasmInstruction(override val value: Int) : INumericEnum {
   UNREACHABLE(WASM_INS_UNREACHABLE),
   NOP(WASM_INS_NOP),

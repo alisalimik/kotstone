@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.aarch64
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class AArch64At(override val value: Int) : INumericEnum {
   S12E0R(AARCH64_AT_S12E0R),
   S12E0W(AARCH64_AT_S12E0W),

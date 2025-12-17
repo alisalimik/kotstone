@@ -5,7 +5,7 @@ import ca.moheektech.capstone.internal.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
-@ca.moheektech.capstone.internal.ExportedApi
+@ExportedApi
 actual enum class ArmVectorDataType(override val value: Int) : INumericEnum {
   INVALID(ARM_VECTORDATA_INVALID),
   I8(ARM_VECTORDATA_I8),

@@ -5,7 +5,7 @@ import ca.moheektech.capstone.internal.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
-@ca.moheektech.capstone.internal.ExportedApi
+@ExportedApi
 actual enum class ArmOpType(override val value: Int) : INumericEnum {
   INVALID(ARM_OP_INVALID),
   REG(ARM_OP_REG),

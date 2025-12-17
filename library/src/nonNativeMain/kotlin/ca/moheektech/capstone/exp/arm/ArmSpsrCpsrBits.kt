@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.arm
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class ArmSpsrCpsrBits(override val value: Int) : INumericEnum {
 
   // SPSR* field flags can be OR combined

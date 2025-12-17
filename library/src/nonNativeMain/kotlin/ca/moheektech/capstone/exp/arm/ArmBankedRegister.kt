@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.arm
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class ArmBankedRegister(override val value: Int) : INumericEnum {
   ELR_HYP(ARM_BANKEDREG_ELR_HYP),
   LR_ABT(ARM_BANKEDREG_LR_ABT),

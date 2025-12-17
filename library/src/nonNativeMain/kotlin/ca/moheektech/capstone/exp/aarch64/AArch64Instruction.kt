@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.aarch64
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class AArch64Instruction(override val value: Int) : INumericEnum {
   LDCLRALB(AARCH64_INS_LDCLRALB),
   LDSETP(AARCH64_INS_LDSETP),

@@ -5,7 +5,7 @@ import ca.moheektech.capstone.internal.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
-@ca.moheektech.capstone.internal.ExportedApi
+@ExportedApi
 actual enum class ArmConditionCode(override val value: Int) : INumericEnum {
   EQ(ARMCC_EQ),
   NE(ARMCC_NE),

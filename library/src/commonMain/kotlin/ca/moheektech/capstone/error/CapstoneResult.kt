@@ -1,5 +1,3 @@
-
-@file:ExportedApi
 package ca.moheektech.capstone.error
 
 import ca.moheektech.capstone.enums.Architecture

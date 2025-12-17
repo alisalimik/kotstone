@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.x86
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class X86Register(override val value: Int) : INumericEnum {
   INVALID(X86_REG_INVALID),
   AH(X86_REG_AH),

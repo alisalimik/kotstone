@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.aarch64
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class AArch64SvePrfm(override val value: Int) : INumericEnum {
   PLDL1KEEP(AARCH64_SVEPRFM_PLDL1KEEP),
   PLDL1STRM(AARCH64_SVEPRFM_PLDL1STRM),

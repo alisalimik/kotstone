@@ -3,6 +3,7 @@ package ca.moheektech.capstone.exp.x86
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
+@ExportedApi
 actual enum class X86InstructionGroup(override val value: Int) : INumericEnum {
 
   INVALID(X86_GRP_INVALID), // /< = CS_GRP_INVALID

@@ -2,8 +2,8 @@
 @file:ExportedApi
 package ca.moheektech.capstone.enums
 
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
+import kotlin.js.JsStatic
 
 /**
  * Operand access type.
@@ -34,6 +34,7 @@ enum class AccessType(val value: Int) {
     val READ_WRITE = READ // Will be or'd together in actual usage
 
     /** Convert integer value to AccessType enum */
+    @JsStatic
     fun fromValue(value: Int): AccessType =
         when {
           value == 0 -> INVALID
@@ -44,9 +45,11 @@ enum class AccessType(val value: Int) {
         }
 
     /** Check if value represents read access */
+    @JsStatic
     fun isRead(value: Int): Boolean = value and READ.value != 0
 
     /** Check if value represents write access */
+    @JsStatic
     fun isWrite(value: Int): Boolean = value and WRITE.value != 0
   }
 }

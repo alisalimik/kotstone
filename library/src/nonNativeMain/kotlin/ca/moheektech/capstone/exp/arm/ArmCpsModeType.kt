@@ -5,7 +5,7 @@ import ca.moheektech.capstone.internal.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
-@ca.moheektech.capstone.internal.ExportedApi
+@ExportedApi
 actual enum class ArmCpsModeType(override val value: Int) : INumericEnum {
   INVALID(ARM_CPSMODE_INVALID),
   IE(ARM_CPSMODE_IE),

@@ -2,8 +2,9 @@
 @file:ExportedApi
 package ca.moheektech.capstone.error
 
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
+import kotlin.js.JsStatic
+import kotlin.jvm.JvmStatic
 
 /** Capstone error codes matching cs_err enum from capstone.h */
 
@@ -55,6 +56,8 @@ enum class ErrorCode(val value: Int) {
 
   companion object {
     /** Convert integer error code to ErrorCode enum */
+    @JsStatic
+    @JvmStatic
     fun fromValue(value: Int): ErrorCode = entries.firstOrNull { it.value == value } ?: OK
   }
 }

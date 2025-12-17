@@ -2,9 +2,10 @@
 @file:ExportedApi
 package ca.moheektech.capstone.enums
 
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
 import kotlin.js.JsName
+import kotlin.js.JsStatic
+import kotlin.jvm.JvmStatic
 
 /**
  * Capstone disassembly mode flags.
@@ -219,13 +220,8 @@ enum class Mode(val value: Int) {
 
   companion object {
     /** Convert integer value to Mode enum */
+    @JsStatic
+    @JvmStatic
     fun fromValue(value: Int): Mode? = entries.firstOrNull { it.value == value }
   }
 }
-
-/** Deprecated alias for backward compatibility. Use [Mode] instead. */
-@Deprecated(
-    message = "Use Mode instead",
-    replaceWith = ReplaceWith("Mode", "ca.moheektech.capstone.enums.Mode"),
-    level = DeprecationLevel.WARNING)
-typealias CsMode = ca.moheektech.capstone.CsMode

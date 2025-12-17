@@ -2,8 +2,9 @@
 @file:ExportedApi
 package ca.moheektech.capstone.enums
 
-import kotlin.js.ExperimentalJsExport
 import ca.moheektech.capstone.internal.ExportedApi
+import kotlin.js.JsStatic
+import kotlin.jvm.JvmStatic
 
 /**
  * Assembly syntax styles.
@@ -41,6 +42,8 @@ enum class Syntax(val value: Int) {
 
   companion object {
     /** Convert integer value to Syntax enum */
+    @JsStatic
+    @JvmStatic
     fun fromValue(value: Int): Syntax? = entries.firstOrNull { it.value == value }
   }
 }
