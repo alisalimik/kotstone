@@ -25,6 +25,7 @@ import ca.moheektech.capstone.exp.x86.X86Prefix
 import ca.moheektech.capstone.exp.x86.X86EFlags
 import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode
 import ca.moheektech.capstone.exp.x86.X86AvxBroadcast
+import ca.moheektech.capstone.bit.BitField
 import kotlinx.cinterop.*
 import platform.posix.size_t
 import platform.posix.size_tVar
@@ -578,7 +579,7 @@ internal class NativeCapstoneBinding(
         sseCC = X86SseConditionCode.fromValue(x86.sse_cc.convert()),
         avxRm = X86AvxRoundingMode.fromValue(x86.avx_rm.convert()),
         avxSae = x86.avx_sae,
-        eflagsModified = emptySet(),
+        eflags = BitField.fromValue(x86.eflags),
         fpuFlags = x86.fpu_flags.convert())
   }
 }

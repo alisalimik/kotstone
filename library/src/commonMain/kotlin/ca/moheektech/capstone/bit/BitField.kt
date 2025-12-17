@@ -1,5 +1,7 @@
 package ca.moheektech.capstone.bit
 
+import kotlin.jvm.JvmInline
+
 /**
  * A type-safe bit field implementation for efficient flag operations.
  *
@@ -46,6 +48,7 @@ package ca.moheektech.capstone.bit
  *
  * @param T The enum type representing individual flags
  */
+@JvmInline
 value class BitField<T>(internal val value: ULong = 0UL) where T : Enum<T> {
 
     companion object {

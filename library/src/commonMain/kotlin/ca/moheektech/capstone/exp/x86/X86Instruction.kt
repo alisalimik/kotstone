@@ -1528,5 +1528,5 @@ expect enum class X86Instruction : INumericEnum {
   XSHA256,
   XSTORE,
   XTEST,
-  ENDING, // mark the end of the list of insn
+  ENDING,
 }

@@ -46,6 +46,7 @@ import ca.moheektech.capstone.exp.x86.X86Prefix
 import ca.moheektech.capstone.exp.x86.X86EFlags
 import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode
 import ca.moheektech.capstone.exp.x86.X86AvxBroadcast
+import ca.moheektech.capstone.bit.BitField
 import com.sun.jna.Memory
 import com.sun.jna.NativeLong
 import com.sun.jna.Pointer
@@ -568,7 +569,7 @@ internal class JnaCapstoneBinding(private val architecture: Architecture, privat
         sseCC = X86SseConditionCode.fromValue(x86.sse_cc),
         avxRm = X86AvxRoundingMode.fromValue(x86.avx_rm),
         avxSae = x86.avx_sae > 0,
-        eflagsModified = emptySet(),
+        eflags = BitField.fromValue(x86.eflags.toULong()),
         fpuFlags = x86.fpu_flags)
   }
 }

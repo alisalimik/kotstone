@@ -8,6 +8,8 @@ import ca.moheektech.capstone.exp.x86.X86SseConditionCode
 import ca.moheektech.capstone.internal.ExportedApi
 import ca.moheektech.capstone.model.Register
 
+import ca.moheektech.capstone.bit.BitField
+
 /**
  * X86/X86-64 instruction details.
  *
@@ -26,8 +28,7 @@ import ca.moheektech.capstone.model.Register
  * @property sseCC SSE condition code
  * @property avxRm AVX rounding mode
  * @property avxSae AVX suppress all exceptions flag
- * @property eflagsModified EFLAGS bits modified by instruction
- * @property eflagsTested EFLAGS bits tested by instruction
+ * @property eflags EFLAGS bits modified/tested/set by instruction
  * @property fpuFlags FPU flags modified by instruction
  */
 @ExportedApi
@@ -47,8 +48,7 @@ data class X86InstructionDetail(
     val sseCC: X86SseConditionCode = X86SseConditionCode.INVALID,
     val avxRm: X86AvxRoundingMode = X86AvxRoundingMode.INVALID,
     val avxSae: Boolean = false,
-    val eflagsModified: Set<X86EFlags> = emptySet(),
-    val eflagsTested: Set<X86EFlags> = emptySet(),
+    val eflags: BitField<X86EFlags> = BitField.empty(),
     val fpuFlags: Long = 0
 ) {
   override fun equals(other: Any?): Boolean {

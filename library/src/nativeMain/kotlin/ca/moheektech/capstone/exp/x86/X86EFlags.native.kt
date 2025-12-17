@@ -4,6 +4,9 @@ import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode.INVALID
 import ca.moheektech.capstone.internal.*
 
+import ca.moheektech.capstone.bit.BitField
+import ca.moheektech.capstone.bit.BitFieldEnum
+
 actual enum class X86EFlags(internal val flag: ULong) : INumericEnum {
   MODIFY_AF(X86_EFLAGS_MODIFY_AF),
   MODIFY_CF(X86_EFLAGS_MODIFY_CF),
@@ -65,9 +68,13 @@ actual enum class X86EFlags(internal val flag: ULong) : INumericEnum {
   RESET_0F(X86_EFLAGS_RESET_0F),
   RESET_AC(X86_EFLAGS_RESET_AC);
 
-    actual companion object {
-        actual fun fromValue(value: Int): X86EFlags {
-            return entries.firstOrNull { it.value == value.toUInt() } ?: entries[value]
+    actual companion object : BitFieldEnum<X86EFlags> {
+        actual override fun fromValue(value: ULong): X86EFlags? {
+            return entries.firstOrNull { it.flag == value }
+        }
+
+        actual override fun allFlags(): BitField<X86EFlags> {
+            return BitField.fromFlags(entries)
         }
     }
 
