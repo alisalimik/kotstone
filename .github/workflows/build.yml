@@ -47,7 +47,7 @@ jobs:
             setup-emscripten: true
           - platform: Android
             os: ubuntu-latest
-            build-tasks: 'compileDebugKotlinAndroid compileKotlinAndroidNativeArm64'
+            build-tasks: 'compileAndroidMain compileKotlinAndroidNativeArm64 compileKotlinAndroidNativeX64'
             setup-android: true
             setup-emscripten: false
 
@@ -477,11 +477,11 @@ jobs:
 
       - name: Build Capstone for Android
         run: |
-          ./gradlew buildCapstoneAndroidArm64Shared buildCapstoneAndroidArm32Shared --stacktrace
+          ./gradlew buildCapstoneAndroidArm64Shared buildCapstoneAndroidArm32Shared buildCapstoneAndroidX64Shared buildCapstoneAndroidX86Shared --stacktrace
 
       - name: Build Android Kotlin targets
         run: |
-          ./gradlew compileDebugKotlinAndroid compileKotlinAndroidNativeArm64 --stacktrace
+          ./gradlew compileAndroidMain compileKotlinAndroidNativeArm64 compileKotlinAndroidNativeX64 compileKotlinAndroidNativeX86 --stacktrace
 
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v6

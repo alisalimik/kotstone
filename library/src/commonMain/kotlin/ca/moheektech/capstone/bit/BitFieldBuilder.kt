@@ -1,10 +1,8 @@
 package ca.moheektech.capstone.bit
 
-import ca.moheektech.capstone.internal.ExportedApi
 import kotlin.js.JsName
 
 /** Builder class for constructing BitFields fluently. */
-@ExportedApi
 class BitFieldBuilder<T : Enum<T>> {
   private var bitField = BitField<T>()
 

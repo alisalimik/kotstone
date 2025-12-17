@@ -78,27 +78,39 @@ jobs:
             build/capstone
             library/interop/lib
             library/interop/capstone/include
-          key: ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-gcc-${{ steps.build-tools.outputs.gcc_version }}
+          key: ${{ runner.os }}-capstone-jvm-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-gcc-${{ steps.build-tools.outputs.gcc_version }}
           restore-keys: |
-            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
-            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-
+            ${{ runner.os }}-capstone-jvm-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
+            ${{ runner.os }}-capstone-jvm-${{ hashFiles('library/interop/capstone/**') }}-
             ${{ runner.os }}-capstone-
 
       - name: Build Capstone for Linux targets
         if: steps.cache-capstone.outputs.cache-hit != 'true'
-        run: ./gradlew buildCapstoneLinuxX64 --info
+        run: |
+          ./gradlew buildCapstoneLinuxX64 --info
+          ./gradlew buildCapstoneLinuxX64Shared --info
 
       - name: Verify Capstone build
         run: |
           echo "=== Capstone Build Verification ==="
+          echo "=== Native Libraries (Kotlin/Native) ==="
           ls -la library/interop/lib/linuxX64/ || echo "linuxX64 library not found"
-          ls -la library/interop/capstone/include/ || echo "Headers not found"
           if [ -f library/interop/lib/linuxX64/libcapstone.a ]; then
-            echo "✓ Capstone library found"
-            ls -lh library/interop/lib/linuxX64/libcapstone.a
+            echo "✓ Static library: $(ls -lh library/interop/lib/linuxX64/libcapstone.a | awk '{print $5}')"
           else
-            echo "✗ Capstone library missing - will be built by Gradle"
+            echo "✗ Static library missing"
           fi
+          echo ""
+          echo "=== Shared Libraries (JVM/JNA) ==="
+          ls -la library/interop/lib/linuxX64Shared/ || echo "linuxX64Shared library not found"
+          if [ -f library/interop/lib/linuxX64Shared/libcapstone.so ]; then
+            echo "✓ Shared library: $(ls -lh library/interop/lib/linuxX64Shared/libcapstone.so | awk '{print $5}')"
+          else
+            echo "✗ Shared library missing - JVM tests may fail"
+          fi
+          echo ""
+          echo "=== Headers ==="
+          ls -la library/interop/capstone/include/ || echo "Headers not found"
 
       - name: Cache Kotlin/Native
         uses: actions/cache@v5
@@ -217,24 +229,36 @@ jobs:
             build/capstone
             library/interop/lib
             library/interop/capstone/include
-          key: ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-xcode-${{ steps.build-tools.outputs.xcode_version }}
+          key: ${{ runner.os }}-capstone-jvm-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-xcode-${{ steps.build-tools.outputs.xcode_version }}
           restore-keys: |
-            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
-            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-
+            ${{ runner.os }}-capstone-jvm-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
+            ${{ runner.os }}-capstone-jvm-${{ hashFiles('library/interop/capstone/**') }}-
             ${{ runner.os }}-capstone-
 
       - name: Build Capstone for Apple targets
         if: steps.cache-capstone.outputs.cache-hit != 'true'
-        run: ./gradlew buildCapstoneAll --info
+        run: |
+          ./gradlew buildCapstoneAll --info
+          ./gradlew buildCapstoneMacosX64Shared buildCapstoneMacosArm64Shared --info
 
       - name: Verify Capstone build
         run: |
           echo "=== Capstone Build Verification ==="
+          echo "=== Native Libraries (Kotlin/Native) ==="
           for target in macosX64 macosArm64 iosArm64 iosX64 iosSimulatorArm64; do
             if [ -f "library/interop/lib/$target/libcapstone.a" ]; then
               echo "✓ $target: $(ls -lh library/interop/lib/$target/libcapstone.a | awk '{print $5}')"
             else
               echo "✗ $target: missing"
+            fi
+          done
+          echo ""
+          echo "=== Shared Libraries (JVM/JNA) ==="
+          for target in macosX64Shared macosArm64Shared; do
+            if [ -f "library/interop/lib/$target/libcapstone.dylib" ]; then
+              echo "✓ $target: $(ls -lh library/interop/lib/$target/libcapstone.dylib | awk '{print $5}')"
+            else
+              echo "✗ $target: missing - JVM tests may fail"
             fi
           done
 
@@ -338,24 +362,34 @@ jobs:
             build/capstone
             library/interop/lib
             library/interop/capstone/include
-          key: ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-gcc-${{ steps.build-tools.outputs.gcc_version }}
+          key: ${{ runner.os }}-capstone-jvm-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-gcc-${{ steps.build-tools.outputs.gcc_version }}
           restore-keys: |
-            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
-            ${{ runner.os }}-capstone-${{ hashFiles('library/interop/capstone/**') }}-
+            ${{ runner.os }}-capstone-jvm-${{ hashFiles('library/interop/capstone/**') }}-cmake-${{ steps.build-tools.outputs.cmake_version }}-
+            ${{ runner.os }}-capstone-jvm-${{ hashFiles('library/interop/capstone/**') }}-
             ${{ runner.os }}-capstone-
 
       - name: Build Capstone for Windows
         if: steps.cache-capstone.outputs.cache-hit != 'true'
-        run: ./gradlew buildCapstoneMingwX64 --info
+        run: |
+          ./gradlew buildCapstoneMingwX64 --info
+          ./gradlew buildCapstoneMingwX64Shared --info
 
       - name: Verify Capstone build
         shell: bash
         run: |
           echo "=== Capstone Build Verification ==="
+          echo "=== Native Libraries (Kotlin/Native) ==="
           if [ -f library/interop/lib/mingwX64/libcapstone.a ]; then
-            echo "✓ mingwX64: $(ls -lh library/interop/lib/mingwX64/libcapstone.a | awk '{print $5}')"
+            echo "✓ Static library: $(ls -lh library/interop/lib/mingwX64/libcapstone.a | awk '{print $5}')"
           else
-            echo "✗ mingwX64: missing"
+            echo "✗ Static library: missing"
+          fi
+          echo ""
+          echo "=== Shared Libraries (JVM/JNA) ==="
+          if [ -f library/interop/lib/mingwX64Shared/libcapstone.dll ] || [ -f library/interop/lib/mingwX64Shared/capstone.dll ]; then
+            echo "✓ Shared library: $(ls -lh library/interop/lib/mingwX64Shared/*.dll 2>/dev/null | awk '{print $5}')"
+          else
+            echo "✗ Shared library: missing - JVM tests may fail"
           fi
 
       - name: Cache Kotlin/Native
@@ -633,6 +667,41 @@ jobs:
             ${{ runner.os }}-konan-android-
             ${{ runner.os }}-konan-
 
+      - name: Free up disk space
+        run: |
+          echo "=== Disk space before cleanup ==="
+          df -h
+          echo ""
+          echo "=== Removing unnecessary files ==="
+
+          # Remove large packages
+          sudo apt-get remove -y '^llvm-.*' '^dotnet-.*' '^temurin-.*' '^mysql-.*' '^mongodb-.*' '^postgresql-.*' 2>/dev/null || true
+          sudo apt-get autoremove -y
+          sudo apt-get clean
+
+          # Remove Docker images and containers
+          docker system prune -af || true
+
+          # Remove Android SDK packages we don't need
+          sdkmanager --uninstall "system-images;android-33;google_apis;x86_64" || true
+          sdkmanager --uninstall "system-images;android-32;google_apis;x86_64" || true
+          sdkmanager --uninstall "system-images;android-31;google_apis;x86_64" || true
+
+          # Remove swap file
+          sudo swapoff -a || true
+          sudo rm -f /swapfile /mnt/swapfile || true
+
+          # Remove large directories
+          sudo rm -rf /usr/share/dotnet || true
+          sudo rm -rf /usr/local/lib/android/sdk/ndk/* || true
+          sudo rm -rf /opt/hostedtoolcache/CodeQL || true
+          sudo rm -rf /usr/local/.ghcup || true
+          sudo rm -rf /usr/local/share/boost || true
+
+          echo ""
+          echo "=== Disk space after cleanup ==="
+          df -h
+
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -646,7 +715,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-34-x86_64
+          key: avd-34-x86_64-4gb
 
       - name: create and cache AVD
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -656,7 +725,10 @@ jobs:
           arch: x86_64
           target: google_apis
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disk-size: 4096M
+          heap-size: 512M
+          ram-size: 2048M
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -partition-size 4096
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
@@ -667,7 +739,10 @@ jobs:
           arch: x86_64
           target: google_apis
           force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disk-size: 4096M
+          heap-size: 512M
+          ram-size: 2048M
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -partition-size 4096
           disable-animations: true
           script: ./gradlew connectedCheck --continue --stacktrace
 
