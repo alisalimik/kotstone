@@ -61,30 +61,31 @@ internal interface CapstoneLibrary : Library {
       return tempFile.absolutePath
     }
 
-    val INSTANCE: CapstoneLibrary =
-        try {
-          if (Platform.isAndroid()) {
-            // On Android, libraries are loaded from the APK's native library path.
-            // We shouldn't try to extract them to a temp file.
+    val INSTANCE: CapstoneLibrary by lazy {
+      try {
+        if (Platform.isAndroid()) {
+          // On Android, libraries are loaded from the APK's native library path.
+          // We shouldn't try to extract them to a temp file.
+          Native.load("capstone", CapstoneLibrary::class.java)
+        } else {
+          // JVM (Desktop) logic: Try load, then fallback to extraction
+          try {
             Native.load("capstone", CapstoneLibrary::class.java)
-          } else {
-            // JVM (Desktop) logic: Try load, then fallback to extraction
+          } catch (e: UnsatisfiedLinkError) {
+            // If not found, extract from resources and load
             try {
-              Native.load("capstone", CapstoneLibrary::class.java)
-            } catch (e: UnsatisfiedLinkError) {
-              // If not found, extract from resources and load
-              try {
-                val libPath = extractLibraryFromResources()
-                Native.load(libPath, CapstoneLibrary::class.java)
-              } catch (ex: Exception) {
-                throw RuntimeException(
-                    "Failed to extract and load Capstone library from resources", ex)
-              }
+              val libPath = extractLibraryFromResources()
+              Native.load(libPath, CapstoneLibrary::class.java)
+            } catch (ex: Exception) {
+              throw RuntimeException(
+                  "Failed to extract and load Capstone library from resources", ex)
             }
           }
-        } catch (ex: Exception) {
-          throw RuntimeException("Failed to load Capstone library", ex)
         }
+      } catch (ex: Exception) {
+        throw RuntimeException("Failed to load Capstone library", ex)
+      }
+    }
   }
 
   fun cs_open(arch: Int, mode: Int, handle: PointerByReference): Int

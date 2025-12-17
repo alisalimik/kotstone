@@ -10,3 +10,5 @@ inline fun DisassemblyIterator.forEach(action: (Instruction) -> Unit) {
     }
   }
 }
+
+expect suspend fun initializeCapstone()

@@ -1,6 +1,7 @@
 package ca.moheektech.capstone
 
 import ca.moheektech.capstone.api.CapstoneEngine
+import ca.moheektech.capstone.api.initializeCapstone
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.Mode
 import kotlin.test.Test
@@ -12,7 +13,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmLocalGet() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     val code = byteArrayOf(0x20, 0x00)
 
     CapstoneEngine.build(Architecture.WASM, Mode.LITTLE_ENDIAN).use { cs ->
@@ -32,7 +33,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmLocalSet() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: local.set 0
     val code = byteArrayOf(0x21, 0x00)
 
@@ -53,7 +54,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmI32Const() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: i32.const 42 (0x41 0x2A)
     val code = byteArrayOf(0x41, 0x2A)
 
@@ -71,7 +72,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmI32Add() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: i32.add
     val code = byteArrayOf(0x6A)
 
@@ -89,7 +90,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmI32Sub() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: i32.sub
     val code = byteArrayOf(0x6B)
 
@@ -107,7 +108,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmI32Mul() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: i32.mul
     val code = byteArrayOf(0x6C)
 
@@ -125,7 +126,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmI32Load() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: i32.load align=2 offset=0 (0x28 0x02 0x00)
     val code = byteArrayOf(0x28, 0x02, 0x00)
 
@@ -143,7 +144,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmI32Store() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: i32.store align=2 offset=0 (0x36 0x02 0x00)
     val code = byteArrayOf(0x36, 0x02, 0x00)
 
@@ -161,7 +162,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmCall() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: call 0 (0x10 0x00)
     val code = byteArrayOf(0x10, 0x00)
 
@@ -184,7 +185,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmReturn() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: return (0x0F)
     val code = byteArrayOf(0x0F)
 
@@ -203,7 +204,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmBlock() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: block (blocktype = empty) (0x02 0x40)
     val code = byteArrayOf(0x02, 0x40)
 
@@ -221,7 +222,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmLoop() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: loop (blocktype = empty) (0x03 0x40)
     val code = byteArrayOf(0x03, 0x40)
 
@@ -239,7 +240,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmBranchIf() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: br_if 0 (0x0D 0x00)
     val code = byteArrayOf(0x0D, 0x00)
 
@@ -258,7 +259,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmMultipleInstructions() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly function: local.get 0; local.get 1; i32.add; return
     val code =
         byteArrayOf(
@@ -283,7 +284,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmArchitectureSupport() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // Check if WASM architecture is supported
     val isSupported = CapstoneEngine.isSupported(Architecture.WASM)
 
@@ -298,7 +299,7 @@ class WasmArchitectureTests {
 
   @Test
   fun testWasmI64Operations() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // WebAssembly: i64.const 100 (LEB128 encoded)
     val code = byteArrayOf(0x42, 0x64.toByte())
 

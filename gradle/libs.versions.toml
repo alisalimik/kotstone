@@ -49,7 +49,7 @@ dokka-gradle = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", ve
 
 ## Build tools
 kotlin-multiplatform = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
-android-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+android-gradle = { group = "com.android.kotlin.multiplatform.library", name = "com.android.kotlin.multiplatform.library.gradle.plugin", version.ref = "agp" }
 
 ## Publish
 maven-publish = { group = "com.vanniktech", name = "gradle-maven-publish-plugin", version.ref = "publish" }

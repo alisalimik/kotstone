@@ -1,6 +1,7 @@
 package ca.moheektech.capstone
 
 import ca.moheektech.capstone.api.CapstoneEngine
+import ca.moheektech.capstone.api.initializeCapstone
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.Mode
 import kotlin.test.Test
@@ -12,7 +13,7 @@ class BitFieldVerificationTest {
 
   @Test
   fun testX86EFlagsBitField() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // ADD EAX, 1 (0x83, 0xC0, 0x01)
     // Modifies: OF, SF, ZF, AF, PF, CF

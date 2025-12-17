@@ -1,14 +1,30 @@
+@file:Suppress("UnstableApiUsage")
+
 package config
 
+import com.android.build.api.dsl.MinSdkVersion
+import com.android.build.api.dsl.androidLibrary
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import platform.Host
 import platform.toolchains
+import kotlin.text.get
 
 context(project: Project)
 fun KotlinMultiplatformExtension.configureTargets() {
     jvm()
-    androidTarget()
+
+    androidLibrary {
+        namespace = "ca.moheektech.kapstone"
+        compileSdk = 36
+        minSdk = 21
+
+        withDeviceTest {
+            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+            execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        }
+
+    }
 
     js(IR) {
         outputModuleName.set("capstone-kt")

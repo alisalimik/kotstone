@@ -199,7 +199,7 @@ internal class NativeCapstoneBinding(
   }
 
   override fun close() {
-    val _ =memScoped {
+    val _ = memScoped {
       val handlePtr = alloc<cshVar>()
       handlePtr.value = handle
       cs_close(handlePtr.ptr)

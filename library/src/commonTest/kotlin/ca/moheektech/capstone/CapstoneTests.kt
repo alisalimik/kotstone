@@ -2,6 +2,7 @@ package ca.moheektech.capstone
 
 import ca.moheektech.capstone.api.CapstoneEngine
 import ca.moheektech.capstone.api.DisassemblyPosition
+import ca.moheektech.capstone.api.initializeCapstone
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.Mode
 import kotlin.test.Test
@@ -18,7 +19,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64BasicAdd() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // add w0, w0, #1
     val code = byteArrayOf(0x00, 0x04, 0x00, 0x11)
 
@@ -35,7 +36,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64Mov() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // mov x0, x1
     val code = byteArrayOf(0xE0.toByte(), 0x03, 0x01, 0xAA.toByte())
 
@@ -51,7 +52,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64Nop() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // nop
     val code = byteArrayOf(0x1F, 0x20, 0x03, 0xD5.toByte())
 
@@ -66,7 +67,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64LoadRegister() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // ldr x0, [x1]
     val code = byteArrayOf(0x20, 0x00, 0x40, 0xF9.toByte())
 
@@ -82,7 +83,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64StoreRegister() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // str x0, [sp, #0x10]
     val code = byteArrayOf(0xE0.toByte(), 0x0B, 0x00, 0xF9.toByte())
 
@@ -97,7 +98,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64Branch() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // b #0x1000
     val code = byteArrayOf(0x00, 0x04, 0x00, 0x14)
 
@@ -114,7 +115,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64BranchLink() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // bl #0x100
     val code = byteArrayOf(0x40, 0x00, 0x00, 0x94.toByte())
 
@@ -131,7 +132,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64Return() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // ret
     val code = byteArrayOf(0xC0.toByte(), 0x03, 0x5F, 0xD6.toByte())
 
@@ -148,7 +149,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64Subtract() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // sub sp, sp, #0x10
     val code = byteArrayOf(0xFF.toByte(), 0x43, 0x00, 0xD1.toByte())
 
@@ -163,7 +164,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64Compare() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // cmp x0, #0
     val code = byteArrayOf(0x1F, 0x00, 0x00, 0xF1.toByte())
 
@@ -178,7 +179,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64MultipleInstructions() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // sub sp, sp, #0x10 ; str x0, [sp] ; ldr x0, [sp] ; add sp, sp, #0x10 ; ret
     val code =
         byteArrayOf(
@@ -226,7 +227,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64ConditionalBranch() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // b.eq #0x100
     val code = byteArrayOf(0x20, 0x08, 0x00, 0x54)
 
@@ -243,7 +244,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64LogicalAnd() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // and x0, x0, x1
     val code = byteArrayOf(0x00, 0x00, 0x01, 0x8A.toByte())
 
@@ -258,7 +259,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64LogicalOr() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // orr x0, x0, x1
     val code = byteArrayOf(0x00, 0x00, 0x01, 0xAA.toByte())
 
@@ -273,7 +274,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64Shift() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // lsl x0, x0, #1
     val code = byteArrayOf(0x00, 0x04, 0x40, 0xD3.toByte())
 
@@ -288,7 +289,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64LoadPair() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // ldp x0, x1, [sp]
     val code = byteArrayOf(0xE0.toByte(), 0x07, 0x40, 0xA9.toByte())
 
@@ -303,7 +304,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64StorePair() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // stp x29, x30, [sp, #-0x10]!
     val code = byteArrayOf(0xFD.toByte(), 0x7B, 0xBF.toByte(), 0xA9.toByte())
 
@@ -318,7 +319,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64Multiply() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // mul x0, x0, x1
     val code = byteArrayOf(0x00, 0x7C, 0x01, 0x9B.toByte())
 
@@ -333,7 +334,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64Divide() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // sdiv x0, x0, x1
     val code = byteArrayOf(0x00, 0x0C, 0xC1.toByte(), 0x9A.toByte())
 
@@ -348,7 +349,7 @@ class CapstoneTests {
 
   @Test
   fun testArm64AddWithCarry() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // adc x0, x0, x1
     val code = byteArrayOf(0x00, 0x00, 0x01, 0x9A.toByte())
 
@@ -367,7 +368,7 @@ class CapstoneTests {
 
   @Test
   fun testArmBasicAdd() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // add r0, r1, r2
     val code = byteArrayOf(0x02, 0x00, 0x81.toByte(), 0xE0.toByte())
 
@@ -384,7 +385,7 @@ class CapstoneTests {
 
   @Test
   fun testArmMov() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // mov r0, r1
     val code = byteArrayOf(0x01, 0x00, 0xA0.toByte(), 0xE1.toByte())
 
@@ -399,7 +400,7 @@ class CapstoneTests {
 
   @Test
   fun testArmNop() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // nop (mov r0, r0)
     val code = byteArrayOf(0x00, 0x00, 0xA0.toByte(), 0xE1.toByte())
 
@@ -415,7 +416,7 @@ class CapstoneTests {
 
   @Test
   fun testArmLoad() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // ldr r0, [r1]
     val code = byteArrayOf(0x00, 0x00, 0x91.toByte(), 0xE5.toByte())
 
@@ -430,7 +431,7 @@ class CapstoneTests {
 
   @Test
   fun testArmStore() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // str r0, [r1]
     val code = byteArrayOf(0x00, 0x00, 0x81.toByte(), 0xE5.toByte())
 
@@ -445,7 +446,7 @@ class CapstoneTests {
 
   @Test
   fun testArmBranch() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // b #0x100
     val code = byteArrayOf(0x3E, 0x00, 0x00, 0xEA.toByte())
 
@@ -462,7 +463,7 @@ class CapstoneTests {
 
   @Test
   fun testArmBranchLink() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // bl #0x100
     val code = byteArrayOf(0x3E, 0x00, 0x00, 0xEB.toByte())
 
@@ -479,7 +480,7 @@ class CapstoneTests {
 
   @Test
   fun testArmBranchExchange() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // bx lr
     val code = byteArrayOf(0x1E, 0xFF.toByte(), 0x2F, 0xE1.toByte())
 
@@ -496,7 +497,7 @@ class CapstoneTests {
 
   @Test
   fun testArmSubtract() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // sub r0, r1, r2
     val code = byteArrayOf(0x02, 0x00, 0x41, 0xE0.toByte())
 
@@ -511,7 +512,7 @@ class CapstoneTests {
 
   @Test
   fun testArmCompare() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // cmp r0, r1
     val code = byteArrayOf(0x01, 0x00, 0x50, 0xE1.toByte())
 
@@ -526,7 +527,7 @@ class CapstoneTests {
 
   @Test
   fun testArmMultipleInstructions() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // push {r4, lr} ; mov r0, r1 ; pop {r4, pc}
     val code =
         byteArrayOf(
@@ -557,7 +558,7 @@ class CapstoneTests {
 
   @Test
   fun testArmLogicalAnd() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // and r0, r1, r2
     val code = byteArrayOf(0x02, 0x00, 0x01, 0xE0.toByte())
 
@@ -572,7 +573,7 @@ class CapstoneTests {
 
   @Test
   fun testArmLogicalOr() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // orr r0, r1, r2
     val code = byteArrayOf(0x02, 0x00, 0x81.toByte(), 0xE1.toByte())
 
@@ -587,7 +588,7 @@ class CapstoneTests {
 
   @Test
   fun testArmExclusiveOr() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // eor r0, r1, r2
     val code = byteArrayOf(0x02, 0x00, 0x21, 0xE0.toByte())
 
@@ -602,7 +603,7 @@ class CapstoneTests {
 
   @Test
   fun testArmShift() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // lsl r0, r1, #1
     val code = byteArrayOf(0x81.toByte(), 0x00, 0xA0.toByte(), 0xE1.toByte())
 
@@ -617,7 +618,7 @@ class CapstoneTests {
 
   @Test
   fun testArmMultiply() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // mul r0, r1, r2
     val code = byteArrayOf(0x91.toByte(), 0x02, 0x00, 0xE0.toByte())
 
@@ -632,7 +633,7 @@ class CapstoneTests {
 
   @Test
   fun testArmLoadMultiple() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // ldm sp!, {r4, pc}
     val code = byteArrayOf(0x10, 0x80.toByte(), 0xBD.toByte(), 0xE8.toByte())
 
@@ -647,7 +648,7 @@ class CapstoneTests {
 
   @Test
   fun testArmStoreMultiple() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // stmdb sp!, {r4, lr}
     val code = byteArrayOf(0x10, 0x40, 0x2D, 0xE9.toByte())
 
@@ -662,7 +663,7 @@ class CapstoneTests {
 
   @Test
   fun testArmConditionalExecution() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // moveq r0, r1
     val code = byteArrayOf(0x01, 0x00, 0xA0.toByte(), 0x01)
 
@@ -677,7 +678,7 @@ class CapstoneTests {
 
   @Test
   fun testArmThumbMode() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // movs r0, #0 (Thumb encoding)
     val code = byteArrayOf(0x00, 0x20)
 
@@ -697,7 +698,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Nop() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // nop
     val code = byteArrayOf(0x90.toByte())
 
@@ -713,7 +714,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64MovRegToReg() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // mov rax, rbx
     val code = byteArrayOf(0x48, 0x89.toByte(), 0xD8.toByte())
@@ -729,7 +730,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64AddRegImm() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // add rax, 0x10
     val code = byteArrayOf(0x48, 0x83.toByte(), 0xC0.toByte(), 0x10)
@@ -745,7 +746,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64SubRegImm() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // sub rsp, 0x20
     val code = byteArrayOf(0x48, 0x83.toByte(), 0xEC.toByte(), 0x20)
@@ -761,7 +762,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Push() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // push rbp
     val code = byteArrayOf(0x55)
@@ -777,7 +778,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Pop() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // pop rbp
     val code = byteArrayOf(0x5D)
@@ -793,7 +794,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Call() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // call rel32
     val code = byteArrayOf(0xE8.toByte(), 0x00, 0x00, 0x00, 0x00)
@@ -811,7 +812,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Ret() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // ret
     val code = byteArrayOf(0xC3.toByte())
@@ -829,7 +830,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Jmp() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // jmp rel8
     val code = byteArrayOf(0xEB.toByte(), 0x10)
@@ -847,7 +848,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64ConditionalJump() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // je rel8
     val code = byteArrayOf(0x74, 0x10)
@@ -865,7 +866,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64LoadMemory() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // mov rax, [rbx]
     val code = byteArrayOf(0x48, 0x8B.toByte(), 0x03)
@@ -881,7 +882,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64StoreMemory() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // mov [rbx], rax
     val code = byteArrayOf(0x48, 0x89.toByte(), 0x03)
@@ -897,8 +898,8 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Lea() = runTest {
-    initCapstoneTesting()
-
+    initializeCapstone()
+    CapstoneEngine
     // lea rax, [rbx+8]
     val code = byteArrayOf(0x48, 0x8D.toByte(), 0x43, 0x08)
 
@@ -913,7 +914,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Cmp() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // cmp rax, rbx
     val code = byteArrayOf(0x48, 0x39.toByte(), 0xD8.toByte())
@@ -929,7 +930,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Test() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // test rax, rax
     val code = byteArrayOf(0x48, 0x85.toByte(), 0xC0.toByte())
@@ -945,7 +946,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Xor() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // xor eax, eax
     val code = byteArrayOf(0x31, 0xC0.toByte())
@@ -961,7 +962,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64And() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // and rax, rbx
     val code = byteArrayOf(0x48, 0x21, 0xD8.toByte())
@@ -977,7 +978,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_64Or() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // or rax, rbx
     val code = byteArrayOf(0x48, 0x09, 0xD8.toByte())
@@ -993,7 +994,7 @@ class CapstoneTests {
 
   @Test
   fun testX86_32BasicMov() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // mov eax, ebx
     val code = byteArrayOf(0x89.toByte(), 0xD8.toByte())
@@ -1009,7 +1010,7 @@ class CapstoneTests {
 
   @Test
   fun testX86MultipleInstructions() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     // push rbp ; mov rbp, rsp ; sub rsp, 0x20 ; nop ; pop rbp ; ret
     val code =
@@ -1047,7 +1048,7 @@ class CapstoneTests {
 
   @Test
   fun testEmptyCode() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     val code = byteArrayOf()
 
     CapstoneEngine.build(Architecture.ARM64, Mode.LITTLE_ENDIAN).use { cs ->
@@ -1060,7 +1061,7 @@ class CapstoneTests {
 
   @Test
   fun testTruncatedInstruction() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // Incomplete ARM64 instruction (only 2 bytes instead of 4)
     val code = byteArrayOf(0x00, 0x04)
 
@@ -1073,7 +1074,7 @@ class CapstoneTests {
 
   @Test
   fun testInvalidInstruction() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // Invalid ARM64 instruction
     val code = byteArrayOf(0xFF.toByte(), 0xFF.toByte(), 0xFF.toByte(), 0xFF.toByte())
 
@@ -1086,7 +1087,7 @@ class CapstoneTests {
 
   @Test
   fun testDisassembleWithCount() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // Multiple ARM64 instructions but only disassemble first 2
     val code =
         byteArrayOf(
@@ -1114,7 +1115,7 @@ class CapstoneTests {
 
   @Test
   fun testIterator() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     val code =
         byteArrayOf(
             0xFF.toByte(),
@@ -1149,7 +1150,7 @@ class CapstoneTests {
 
   @Test
   fun testDisassembleOneByOne() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     val code =
         byteArrayOf(
             0x00,
@@ -1182,7 +1183,7 @@ class CapstoneTests {
 
   @Test
   fun testDetailMode() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     // add w0, w0, #1
     val code = byteArrayOf(0x00, 0x04, 0x00, 0x11)
 
@@ -1199,7 +1200,7 @@ class CapstoneTests {
 
   @Test
   fun testRegisterName() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     CapstoneEngine.build(Architecture.ARM64, Mode.LITTLE_ENDIAN).use { cs ->
       // ARM64 register IDs: X0 = ~1, X1 = ~2, etc (actual values depend on Capstone)
@@ -1212,7 +1213,7 @@ class CapstoneTests {
 
   @Test
   fun testInstructionName() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
 
     CapstoneEngine.build(Architecture.ARM64, Mode.LITTLE_ENDIAN).use { cs ->
       // Get name for a specific instruction ID
@@ -1226,7 +1227,7 @@ class CapstoneTests {
 
   @Test
   fun testVersion() = runTest {
-    initCapstoneTesting()
+    initializeCapstone()
     val (major, minor) = CapstoneEngine.version()
 
     // Capstone version should be at least 4.0

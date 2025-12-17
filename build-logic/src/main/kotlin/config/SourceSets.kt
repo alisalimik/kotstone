@@ -2,8 +2,8 @@ package config
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import org.jetbrains.kotlin.konan.target.Family
 
 fun KotlinMultiplatformExtension.configureSourceSets() {
     applyDefaultHierarchyTemplate {
@@ -14,11 +14,6 @@ fun KotlinMultiplatformExtension.configureSourceSets() {
                 withWasmJs()
                 withWasmWasi()
                 withJs()
-            }
-
-            group("jvmAndAndroid") {
-                withJvm()
-                withAndroidTarget()
             }
         }
     }

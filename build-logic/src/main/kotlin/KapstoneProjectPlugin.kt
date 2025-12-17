@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 class KapstoneProjectPlugin : Plugin<Project> {
     override fun apply(project: Project) = with(project) {
         plugins.apply("org.jetbrains.kotlin.multiplatform")
-        plugins.apply("com.android.library")
+        plugins.apply("com.android.kotlin.multiplatform.library")
         plugins.apply("org.jetbrains.dokka")
         plugins.apply("com.ncorti.ktfmt.gradle")
         plugins.apply("io.gitlab.arturbosch.detekt")
         plugins.apply("com.vanniktech.maven.publish")
         plugins.apply("org.jetbrains.kotlinx.binary-compatibility-validator")
 
-        plugins.withId("com.android.library") {
+        plugins.withId("com.android.kotlin.multiplatform.library") {
             extensions.configure(KotlinMultiplatformExtension::class.java) {
                 configureArgs()
                 configureTargets()

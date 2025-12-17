@@ -1,7 +1,10 @@
 plugins { alias(libs.plugins.kapstone.project) }
 
 kotlin {
-  swiftExport {}
+  androidComponents.onVariants {
+    it.sources.jniLibs?.addStaticSourceDirectory("interop/linked-android")
+  }
+
   sourceSets {
     commonMain.dependencies {
       implementation(libs.kotlin.stdlib)
@@ -13,34 +16,35 @@ kotlin {
       implementation(libs.kotlinx.coroutines.test)
     }
 
-    jvmMain.dependencies { implementation(libs.java.jna) }
-
     jsMain.dependencies { implementation(libs.kotlin.stdlib.js) }
 
     wasmJsMain.dependencies { implementation(libs.kotlin.stdlib.wasm) }
-    androidInstrumentedTest.dependencies {
+
+    androidDeviceTest.dependencies {
       implementation(libs.androidx.test.junit)
       implementation(libs.androidx.test.espresso)
       implementation(libs.androidx.test.runner)
     }
+
+    val jna =
+        create("jnaMain") {
+          dependsOn(commonMain.get())
+          dependsOn(getByName("nonNativeMain"))
+        }
+
+    jvmMain {
+      dependsOn(jna)
+      dependencies { implementation(libs.java.jna) }
+    }
+
+    androidMain {
+      dependsOn(jna)
+      dependencies { implementation(libs.java.jna.get().apply { artifact { type = "aar" } }) }
+    }
   }
-}
-
-android {
-  namespace = "ca.moheektech.kapstone"
-  compileSdk = 36
-
-  defaultConfig {
-    minSdk = 21
-    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-  }
-
-  sourceSets { sourceSets["main"].jniLibs.srcDir("interop/linked-android") }
 }
 
 dependencies {
   dokkaPlugin(libs.dokka.android)
   dokkaHtmlPlugin(libs.dokka.versioning)
-
-  implementation(libs.java.jna) { artifact { type = "aar" } }
 }

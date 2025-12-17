@@ -18,7 +18,17 @@ import java.util.Arrays
  * - Offset 242+: detail pointer
  */
 @Structure.FieldOrder(
-    "id", "alias_id", "address", "size", "bytes", "mnemonic", "op_str", "is_alias", "usesAliasDetails", "illegal", "detail")
+    "id",
+    "alias_id",
+    "address",
+    "size",
+    "bytes",
+    "mnemonic",
+    "op_str",
+    "is_alias",
+    "usesAliasDetails",
+    "illegal",
+    "detail")
 internal class CsInsn() : Structure() {
   @JvmField var id: Int = 0 // unsigned int (4 bytes)
   // JNA inserts 4 bytes padding here for alignment
@@ -28,7 +38,7 @@ internal class CsInsn() : Structure() {
   @JvmField var bytes: ByteArray = ByteArray(24) // uint8_t[24]
   @JvmField var mnemonic: ByteArray = ByteArray(32) // char[32]
   @JvmField var op_str: ByteArray = ByteArray(160) // char[160]
-  
+
   // New fields in Capstone v6/Next
   @JvmField var is_alias: Byte = 0 // bool
   @JvmField var usesAliasDetails: Byte = 0 // bool
@@ -49,6 +59,16 @@ internal class CsInsn() : Structure() {
 
   override fun getFieldOrder(): List<String> {
     return listOf(
-        "id", "alias_id", "address", "size", "bytes", "mnemonic", "op_str", "is_alias", "usesAliasDetails", "illegal", "detail")
+        "id",
+        "alias_id",
+        "address",
+        "size",
+        "bytes",
+        "mnemonic",
+        "op_str",
+        "is_alias",
+        "usesAliasDetails",
+        "illegal",
+        "detail")
   }
 }
