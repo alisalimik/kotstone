@@ -13,6 +13,7 @@ import ca.moheektech.capstone.arch.ArmOperand
 import ca.moheektech.capstone.arch.X86InstructionDetail
 import ca.moheektech.capstone.arch.X86MemoryOperand
 import ca.moheektech.capstone.arch.X86Operand
+import ca.moheektech.capstone.bit.BitField
 import ca.moheektech.capstone.enums.AccessType
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.CapstoneOption
@@ -37,16 +38,14 @@ import ca.moheektech.capstone.exp.toArmOpType
 import ca.moheektech.capstone.exp.toArmSetEndType
 import ca.moheektech.capstone.exp.toArmShifter
 import ca.moheektech.capstone.exp.toArmVectorDataType
+import ca.moheektech.capstone.exp.x86.X86AvxBroadcast
+import ca.moheektech.capstone.exp.x86.X86AvxConditionCode
+import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode
+import ca.moheektech.capstone.exp.x86.X86OpType
+import ca.moheektech.capstone.exp.x86.X86Prefix
+import ca.moheektech.capstone.exp.x86.X86SseConditionCode
 import ca.moheektech.capstone.model.InstructionDetail
 import ca.moheektech.capstone.model.Register
-import ca.moheektech.capstone.exp.x86.X86OpType
-import ca.moheektech.capstone.exp.x86.X86SseConditionCode
-import ca.moheektech.capstone.exp.x86.X86AvxConditionCode
-import ca.moheektech.capstone.exp.x86.X86Prefix
-import ca.moheektech.capstone.exp.x86.X86EFlags
-import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode
-import ca.moheektech.capstone.exp.x86.X86AvxBroadcast
-import ca.moheektech.capstone.bit.BitField
 import com.sun.jna.Memory
 import com.sun.jna.NativeLong
 import com.sun.jna.Pointer
@@ -60,8 +59,10 @@ import com.sun.jna.ptr.PointerByReference
  *
  * This implementation uses JNA to call Capstone C API via native library loading.
  */
-internal actual fun createPlatformBinding(architecture: Architecture, mode: Mode): CapstoneBinding =
-    JnaCapstoneBinding(architecture, mode)
+internal actual fun createPlatformBinding(
+    architecture: Architecture,
+    mode: BitField<Mode>
+): CapstoneBinding = JnaCapstoneBinding(architecture, mode)
 
 internal actual fun getPlatformVersion(): Pair<Int, Int> {
   val major = IntByReference()
@@ -75,15 +76,17 @@ internal actual fun isPlatformSupported(arch: Architecture): Boolean {
 }
 
 /** JNA-based Capstone binding implementation */
-internal class JnaCapstoneBinding(private val architecture: Architecture, private val mode: Mode) :
-    CapstoneBinding {
+internal class JnaCapstoneBinding(
+    private val architecture: Architecture,
+    private val mode: BitField<Mode>
+) : CapstoneBinding {
 
   private val handleRef: PointerByReference = PointerByReference()
   private val handle: Pointer
   private var detailEnabled = false
 
   init {
-    val err = CapstoneLibrary.INSTANCE.cs_open(architecture.value, mode.value, handleRef)
+    val err = CapstoneLibrary.INSTANCE.cs_open(architecture.value, mode.value.toInt(), handleRef)
     if (err != ErrorCode.OK.value) {
       val errorMsg = CapstoneLibrary.INSTANCE.cs_strerror(err) ?: "Unknown error"
       throw CapstoneError.UnsupportedArchitecture(

@@ -17,7 +17,7 @@ expect enum class X86Prefix : INumericEnum {
   OPSIZE,
   ADDRSIZE;
 
-    companion object {
-        fun fromValue(value: Int): X86Prefix
-    }
+  companion object {
+    fun fromValue(value: Int): X86Prefix
+  }
 }

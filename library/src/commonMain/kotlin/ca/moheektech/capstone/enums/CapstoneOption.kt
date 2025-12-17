@@ -1,5 +1,6 @@
 package ca.moheektech.capstone.enums
 
+import ca.moheektech.capstone.bit.BitField
 import ca.moheektech.capstone.internal.ExportedApi
 
 /**
@@ -60,9 +61,9 @@ sealed class CapstoneOption {
    *
    * Allows switching between modes (e.g., ARM/Thumb) without reopening the engine.
    */
-  data class ChangeMode(val newMode: Mode) : CapstoneOption() {
+  data class ChangeMode(val newMode: BitField<Mode>) : CapstoneOption() {
     override val optType = 3 // CS_OPT_MODE
-    override val optValue = newMode.value
+    override val optValue = newMode.value.toInt()
   }
 
   /**

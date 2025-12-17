@@ -1,9 +1,8 @@
 package ca.moheektech.capstone.bit
 
-
 /**
  * DSL for creating BitFields with natural syntax.
- * 
+ *
  * Usage:
  * ```kotlin
  * val permissions = bitField<FilePermissions> {
@@ -13,5 +12,4 @@ package ca.moheektech.capstone.bit
  * }
  * ```
  */
-@DslMarker
-annotation class BitFieldDsl
+@DslMarker annotation class BitFieldDsl

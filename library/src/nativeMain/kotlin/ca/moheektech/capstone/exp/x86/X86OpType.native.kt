@@ -12,9 +12,9 @@ actual enum class X86OpType(override val value: UInt) : INumericEnum {
   IMM(X86_OP_IMM),
   MEM(X86_OP_MEM);
 
-    actual companion object {
-        actual fun fromValue(value: Int): X86OpType {
-            return entries.firstOrNull { it.value == value.toUInt() } ?: INVALID
-        }
+  actual companion object {
+    actual fun fromValue(value: Int): X86OpType {
+      return entries.firstOrNull { it.value == value.toUInt() } ?: INVALID
     }
+  }
 }

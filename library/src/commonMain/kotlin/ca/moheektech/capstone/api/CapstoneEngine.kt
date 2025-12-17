@@ -7,6 +7,8 @@ import ca.moheektech.capstone.ArmInstruction
 import ca.moheektech.capstone.Instruction
 import ca.moheektech.capstone.InternalInstruction
 import ca.moheektech.capstone.X86Instruction
+import ca.moheektech.capstone.bit.BitField
+import ca.moheektech.capstone.bit.toBitField
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.CapstoneOption
 import ca.moheektech.capstone.enums.Mode
@@ -44,7 +46,7 @@ import kotlin.js.JsName
 class CapstoneEngine
 internal constructor(
     val architecture: Architecture,
-    val mode: Mode,
+    val mode: BitField<Mode>,
     private val binding: CapstoneBinding
 ) : AutoCloseable {
 
@@ -309,13 +311,22 @@ internal constructor(
      * }
      * ```
      */
+    @JsName("buildWithBitField")
+    fun build(
+        architecture: Architecture,
+        mode: BitField<Mode>,
+        configure: CapstoneBuilder.() -> Unit = {}
+    ): CapstoneEngine {
+      return CapstoneBuilder(architecture, mode).apply(configure).build()
+    }
+
     @JsName("buildWithEnum")
     fun build(
         architecture: Architecture,
         mode: Mode,
         configure: CapstoneBuilder.() -> Unit = {}
     ): CapstoneEngine {
-      return CapstoneBuilder(architecture, mode).apply(configure).build()
+      return CapstoneBuilder(architecture, mode.toBitField()).apply(configure).build()
     }
 
     /**
@@ -345,7 +356,7 @@ internal constructor(
     ): CapstoneEngine {
       // Find the mode enum that matches, or use the first valid one
       val modeEnum = Mode.fromValue(mode) ?: Mode.LITTLE_ENDIAN
-      return build(architecture, modeEnum, configure)
+      return build(architecture, modeEnum.toBitField(), configure)
     }
   }
 }

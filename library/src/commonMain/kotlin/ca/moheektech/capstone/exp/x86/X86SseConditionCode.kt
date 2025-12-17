@@ -14,7 +14,7 @@ expect enum class X86SseConditionCode : INumericEnum {
   NLE,
   ORD;
 
-    companion object {
-        fun fromValue(value: Int): X86SseConditionCode
-    }
+  companion object {
+    fun fromValue(value: Int): X86SseConditionCode
+  }
 }

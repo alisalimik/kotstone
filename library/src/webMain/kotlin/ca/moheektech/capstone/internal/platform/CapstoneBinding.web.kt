@@ -10,17 +10,10 @@ import ca.moheektech.capstone.arch.ArchDetail
 import ca.moheektech.capstone.arch.ArmInstructionDetail
 import ca.moheektech.capstone.arch.ArmMemoryOperand
 import ca.moheektech.capstone.arch.ArmOperand
-import ca.moheektech.capstone.exp.x86.X86OpType
-import ca.moheektech.capstone.exp.x86.X86SseConditionCode
-import ca.moheektech.capstone.exp.x86.X86AvxConditionCode
-import ca.moheektech.capstone.exp.x86.X86Prefix
-import ca.moheektech.capstone.exp.x86.X86EFlags
-import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode
-import ca.moheektech.capstone.exp.x86.X86AvxBroadcast
-import ca.moheektech.capstone.bit.BitField
 import ca.moheektech.capstone.arch.X86InstructionDetail
 import ca.moheektech.capstone.arch.X86MemoryOperand
 import ca.moheektech.capstone.arch.X86Operand
+import ca.moheektech.capstone.bit.BitField
 import ca.moheektech.capstone.enums.AccessType
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.CapstoneOption
@@ -43,6 +36,12 @@ import ca.moheektech.capstone.exp.arm.ArmOpType
 import ca.moheektech.capstone.exp.arm.ArmSetEndType
 import ca.moheektech.capstone.exp.arm.ArmShifter
 import ca.moheektech.capstone.exp.arm.ArmVectorDataType
+import ca.moheektech.capstone.exp.x86.X86AvxBroadcast
+import ca.moheektech.capstone.exp.x86.X86AvxConditionCode
+import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode
+import ca.moheektech.capstone.exp.x86.X86OpType
+import ca.moheektech.capstone.exp.x86.X86Prefix
+import ca.moheektech.capstone.exp.x86.X86SseConditionCode
 import ca.moheektech.capstone.internal.CapstoneModuleInstance
 import ca.moheektech.capstone.model.InstructionDetail
 import ca.moheektech.capstone.model.Register
@@ -708,17 +707,18 @@ internal class WasmCapstoneBinding(private val architecture: Architecture, priva
         avxRm = X86AvxRoundingMode.fromValue(avxRmVal),
         avxSae = avxSae,
         eflags = BitField.fromValue(eflagsVal.toULong()),
-        fpuFlags = 0 // Unresolved FPU flags in Web binding? Wait, struct has 64 bytes for operands. 
-                     // Check if fpu_flags exists? Step 69 says opCount at ptr+60.
-                     // The struct seems to end eflags at 60. 
-                     // Let's recheck cs_x86 layout. 
-                     // 52: eflags (8 bytes). ends at 60.
-                     // 60: op_count (1 byte)
-                     // So no fpu_flags in Web binding version or it was missed?
-                     // X86UnionOpInfo has fpu_flags. 
-                     // Native binding uses x86.fpu_flags. 
-                     // Web binding seems to skip it or it's implicitly 0. 
-                     // I will stick to eflags change.
+        fpuFlags =
+            0 // Unresolved FPU flags in Web binding? Wait, struct has 64 bytes for operands.
+        // Check if fpu_flags exists? Step 69 says opCount at ptr+60.
+        // The struct seems to end eflags at 60.
+        // Let's recheck cs_x86 layout.
+        // 52: eflags (8 bytes). ends at 60.
+        // 60: op_count (1 byte)
+        // So no fpu_flags in Web binding version or it was missed?
+        // X86UnionOpInfo has fpu_flags.
+        // Native binding uses x86.fpu_flags.
+        // Web binding seems to skip it or it's implicitly 0.
+        // I will stick to eflags change.
         )
   }
 

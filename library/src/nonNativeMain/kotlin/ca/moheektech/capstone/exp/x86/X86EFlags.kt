@@ -1,14 +1,13 @@
 package ca.moheektech.capstone.exp.x86
 
+import ca.moheektech.capstone.bit.BitField
+import ca.moheektech.capstone.bit.BitFieldEnum
+import ca.moheektech.capstone.bit.IFlagValue
 import ca.moheektech.capstone.exp.INumericEnum
 import ca.moheektech.capstone.internal.*
 
-
-import ca.moheektech.capstone.bit.BitField
-import ca.moheektech.capstone.bit.BitFieldEnum
-
 @ExportedApi
-actual enum class X86EFlags(internal val flag: ULong) : INumericEnum {
+actual enum class X86EFlags(actual override val flag: ULong) : INumericEnum, IFlagValue {
   MODIFY_AF(X86_EFLAGS_MODIFY_AF),
   MODIFY_CF(X86_EFLAGS_MODIFY_CF),
   MODIFY_SF(X86_EFLAGS_MODIFY_SF),
@@ -69,15 +68,15 @@ actual enum class X86EFlags(internal val flag: ULong) : INumericEnum {
   RESET_0F(X86_EFLAGS_RESET_0F),
   RESET_AC(X86_EFLAGS_RESET_AC);
 
-    actual companion object : BitFieldEnum<X86EFlags> {
-        actual override fun fromValue(value: ULong): X86EFlags? {
-            return entries.firstOrNull { it.flag == value }
-        }
-
-        actual override fun allFlags(): BitField<X86EFlags> {
-            return BitField.fromFlags(entries)
-        }
+  actual companion object : BitFieldEnum<X86EFlags> {
+    actual override fun fromValue(value: ULong): X86EFlags? {
+      return entries.firstOrNull { it.flag == value }
     }
+
+    actual override fun allFlags(): BitField<X86EFlags> {
+      return BitField.fromFlags(entries)
+    }
+  }
 
   override val value: Int
     get() = flag.toInt()

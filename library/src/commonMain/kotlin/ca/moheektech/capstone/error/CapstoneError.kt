@@ -2,6 +2,8 @@
 
 package ca.moheektech.capstone.error
 
+import ca.moheektech.capstone.bit.BitField
+import ca.moheektech.capstone.bit.toBitField
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.Mode
 import ca.moheektech.capstone.enums.Syntax
@@ -28,7 +30,7 @@ sealed class CapstoneError : Exception() {
 
   /** Invalid mode error */
   data class InvalidMode(
-      val mode: Mode,
+      val mode: BitField<Mode>,
       override val message: String = "Invalid/unsupported mode: $mode"
   ) : CapstoneError()
 
@@ -73,7 +75,7 @@ sealed class CapstoneError : Exception() {
 /** Convert ErrorCode to CapstoneError */
 fun ErrorCode.toError(
     arch: Architecture = Architecture.ARM,
-    mode: Mode = Mode.LITTLE_ENDIAN,
+    mode: BitField<Mode> = Mode.LITTLE_ENDIAN.toBitField(),
     syntax: Syntax = Syntax.DEFAULT
 ): CapstoneError =
     when (this) {

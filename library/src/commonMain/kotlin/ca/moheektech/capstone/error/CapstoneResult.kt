@@ -1,5 +1,7 @@
 package ca.moheektech.capstone.error
 
+import ca.moheektech.capstone.bit.BitField
+import ca.moheektech.capstone.bit.toBitField
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.Mode
 
@@ -42,5 +44,5 @@ fun <T> CapstoneResult<T>.failure(error: CapstoneError): CapstoneResult<T> = Res
 fun <T> CapstoneResult<T>.failure(
     errorCode: ErrorCode,
     arch: Architecture = Architecture.ARM,
-    mode: Mode = Mode.LITTLE_ENDIAN
+    mode: BitField<Mode> = Mode.LITTLE_ENDIAN.toBitField()
 ): CapstoneResult<T> = Result.failure(errorCode.toError(arch, mode))

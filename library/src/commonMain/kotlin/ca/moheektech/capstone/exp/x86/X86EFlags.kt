@@ -1,11 +1,11 @@
 package ca.moheektech.capstone.exp.x86
 
-import ca.moheektech.capstone.exp.INumericEnum
-
 import ca.moheektech.capstone.bit.BitField
 import ca.moheektech.capstone.bit.BitFieldEnum
+import ca.moheektech.capstone.bit.IFlagValue
+import ca.moheektech.capstone.exp.INumericEnum
 
-expect enum class X86EFlags : INumericEnum {
+expect enum class X86EFlags : INumericEnum, IFlagValue {
   MODIFY_AF,
   MODIFY_CF,
   MODIFY_SF,
@@ -66,8 +66,11 @@ expect enum class X86EFlags : INumericEnum {
   RESET_0F,
   RESET_AC;
 
-    companion object : BitFieldEnum<X86EFlags> {
-        override fun fromValue(value: ULong): X86EFlags?
-        override fun allFlags(): BitField<X86EFlags>
-    }
+  override val flag: ULong
+
+  companion object : BitFieldEnum<X86EFlags> {
+    override fun fromValue(value: ULong): X86EFlags?
+
+    override fun allFlags(): BitField<X86EFlags>
+  }
 }

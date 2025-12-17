@@ -54,6 +54,45 @@ internal const val CS_MODE_M680X_6809: Int = 1 shl 7 // M680X Motorola 6809 mode
 internal const val CS_MODE_M680X_6811: Int = 1 shl 8 // M680X Motorola/Freescale 68HC11 mode
 internal const val CS_MODE_M680X_CPU12: Int = 1 shl 9 // M680X Motorola/Freescale/NXP CPU12 mode
 internal const val CS_MODE_M680X_HCS08: Int = 1 shl 10 // M680X Freescale HCS08 mode
+internal const val CS_MODE_TRICORE_110 = 1 shl 1 // /< Tricore 1.1
+internal const val CS_MODE_TRICORE_120 = 1 shl 2 // /< Tricore 1.2
+internal const val CS_MODE_TRICORE_130 = 1 shl 3 // /< Tricore 1.3
+internal const val CS_MODE_TRICORE_131 = 1 shl 4 // /< Tricore 1.3.1
+internal const val CS_MODE_TRICORE_160 = 1 shl 5 // /< Tricore 1.6
+internal const val CS_MODE_TRICORE_161 = 1 shl 6 // /< Tricore 1.6.1
+internal const val CS_MODE_TRICORE_162 = 1 shl 7 // /< Tricore 1.6.2
+internal const val CS_MODE_TRICORE_180 = 1 shl 8 // /< Tricore 1.8.0
+
+internal const val CS_MODE_M68K_000 = 1 shl 1 // /< M68K 68000 mode
+internal const val CS_MODE_M68K_010 = 1 shl 2 // /< M68K 68010 mode
+internal const val CS_MODE_M68K_020 = 1 shl 3 // /< M68K 68020 mode
+internal const val CS_MODE_M68K_030 = 1 shl 4 // /< M68K 68030 mode
+internal const val CS_MODE_M68K_040 = 1 shl 5 // /< M68K 68040 mode
+internal const val CS_MODE_M68K_060 = 1 shl 6 // /< M68K 68060 mode
+
+internal const val CS_MODE_SH2 = 1 shl 1 // /< SH2
+internal const val CS_MODE_SH2A = 1 shl 2 // /< SH2A
+internal const val CS_MODE_SH3 = 1 shl 3 // /< SH3
+internal const val CS_MODE_SH4 = 1 shl 4 // /< SH4
+internal const val CS_MODE_SH4A = 1 shl 5 // /< SH4A
+internal const val CS_MODE_SHFPU = 1 shl 6 // /< w/ FPU
+internal const val CS_MODE_SHDSP = 1 shl 7 // /< w/ DSP
+
+internal const val CS_MODE_BPF_CLASSIC = 0 // /< Classic BPF mode (default)
+internal const val CS_MODE_BPF_EXTENDED = 1 shl 0 // /< Extended BPF mode
+internal const val CS_MODE_RISCV32 = 1 shl 0 // /< RISCV RV32G
+internal const val CS_MODE_RISCV64 = 1 shl 1 // /< RISCV RV64G
+internal const val CS_MODE_RISCVC = 1 shl 2 // /< RISCV compressed instructure mode
+internal const val CS_MODE_MOS65XX_6502 = 1 shl 1 // /< MOS65XXX MOS 6502
+internal const val CS_MODE_MOS65XX_65C02 = 1 shl 2 // /< MOS65XXX WDC 65c02
+internal const val CS_MODE_MOS65XX_W65C02 = 1 shl 3 // /< MOS65XXX WDC W65c02
+internal const val CS_MODE_MOS65XX_65816 = 1 shl 4 // /< MOS65XXX WDC 65816, 8-bit m/x
+internal const val CS_MODE_MOS65XX_65816_LONG_M =
+    (1 shl 5) // /< MOS65XXX WDC 65816, 16-bit m, 8-bit x
+internal const val CS_MODE_MOS65XX_65816_LONG_X =
+    (1 shl 6) // /< MOS65XXX WDC 65816, 8-bit m, 16-bit x
+internal const val CS_MODE_MOS65XX_65816_LONG_MX =
+    CS_MODE_MOS65XX_65816_LONG_M or CS_MODE_MOS65XX_65816_LONG_X
 
 // Capstone error
 internal const val CS_ERR_OK: Int = 0

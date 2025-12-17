@@ -14,9 +14,9 @@ actual enum class X86AvxRoundingMode(override val value: UInt) : INumericEnum {
   RU(X86_AVX_RM_RU),
   RZ(X86_AVX_RM_RZ);
 
-    actual companion object {
-        actual fun fromValue(value: Int): X86AvxRoundingMode {
-            return entries.firstOrNull { it.value == value.toUInt() } ?: INVALID
-        }
+  actual companion object {
+    actual fun fromValue(value: Int): X86AvxRoundingMode {
+      return entries.firstOrNull { it.value == value.toUInt() } ?: INVALID
     }
+  }
 }

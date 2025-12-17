@@ -2,6 +2,7 @@ package ca.moheektech.capstone.internal.platform
 
 import ca.moheektech.capstone.Instruction
 import ca.moheektech.capstone.api.DisassemblyPosition
+import ca.moheektech.capstone.bit.BitField
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.CapstoneOption
 import ca.moheektech.capstone.enums.Mode
@@ -108,7 +109,10 @@ internal interface CapstoneBinding {
  * @return Platform-specific binding instance
  * @throws CapstoneError if initialization fails
  */
-internal expect fun createPlatformBinding(architecture: Architecture, mode: Mode): CapstoneBinding
+internal expect fun createPlatformBinding(
+    architecture: Architecture,
+    mode: BitField<Mode>
+): CapstoneBinding
 
 /** Get Capstone version (platform-specific). */
 internal expect fun getPlatformVersion(): Pair<Int, Int>

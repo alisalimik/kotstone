@@ -38,7 +38,7 @@ expect enum class X86AvxConditionCode : INumericEnum {
   GT_OQ,
   TRUE_US;
 
-    companion object {
-        fun fromValue(value: Int): X86AvxConditionCode
-    }
+  companion object {
+    fun fromValue(value: Int): X86AvxConditionCode
+  }
 }

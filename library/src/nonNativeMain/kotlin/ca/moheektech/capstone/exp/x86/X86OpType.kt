@@ -14,9 +14,9 @@ actual enum class X86OpType(override val value: Int) : INumericEnum {
   IMM(CS_OP_IMM),
   MEM(CS_OP_MEM);
 
-    actual companion object {
-        actual fun fromValue(value: Int): X86OpType {
-            return entries.firstOrNull { it.value == value } ?: INVALID
-        }
+  actual companion object {
+    actual fun fromValue(value: Int): X86OpType {
+      return entries.firstOrNull { it.value == value } ?: INVALID
     }
+  }
 }

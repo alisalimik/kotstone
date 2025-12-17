@@ -1,5 +1,6 @@
 package ca.moheektech.capstone.arch
 
+import ca.moheektech.capstone.bit.BitField
 import ca.moheektech.capstone.exp.x86.X86AvxConditionCode
 import ca.moheektech.capstone.exp.x86.X86AvxRoundingMode
 import ca.moheektech.capstone.exp.x86.X86EFlags
@@ -7,8 +8,6 @@ import ca.moheektech.capstone.exp.x86.X86Prefix
 import ca.moheektech.capstone.exp.x86.X86SseConditionCode
 import ca.moheektech.capstone.internal.ExportedApi
 import ca.moheektech.capstone.model.Register
-
-import ca.moheektech.capstone.bit.BitField
 
 /**
  * X86/X86-64 instruction details.

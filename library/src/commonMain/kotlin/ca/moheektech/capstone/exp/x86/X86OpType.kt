@@ -8,7 +8,7 @@ expect enum class X86OpType : INumericEnum {
   IMM,
   MEM;
 
-    companion object {
-        fun fromValue(value: Int): X86OpType
-    }
+  companion object {
+    fun fromValue(value: Int): X86OpType
+  }
 }

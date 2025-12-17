@@ -2,6 +2,7 @@
 
 package ca.moheektech.capstone.api
 
+import ca.moheektech.capstone.bit.BitField
 import ca.moheektech.capstone.enums.Architecture
 import ca.moheektech.capstone.enums.CapstoneOption
 import ca.moheektech.capstone.enums.Mode
@@ -36,7 +37,7 @@ import ca.moheektech.capstone.internal.platform.createPlatformBinding
  * @property architecture Target architecture to disassemble
  * @property mode Disassembly mode flags
  */
-class CapstoneBuilder(private val architecture: Architecture, private val mode: Mode) {
+class CapstoneBuilder(private val architecture: Architecture, private val mode: BitField<Mode>) {
   private val options = mutableListOf<CapstoneOption>()
 
   /**

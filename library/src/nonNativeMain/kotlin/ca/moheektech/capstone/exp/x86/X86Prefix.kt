@@ -32,9 +32,9 @@ actual enum class X86Prefix(override val value: Int) : INumericEnum {
   OPSIZE(X86_PREFIX_OPSIZE),
   ADDRSIZE(X86_PREFIX_ADDRSIZE);
 
-    actual companion object {
-        actual fun fromValue(value: Int): X86Prefix {
-            return entries.firstOrNull { it.value == value } ?: ZERO
-        }
+  actual companion object {
+    actual fun fromValue(value: Int): X86Prefix {
+      return entries.firstOrNull { it.value == value } ?: ZERO
     }
+  }
 }

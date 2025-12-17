@@ -9,7 +9,7 @@ expect enum class X86AvxRoundingMode : INumericEnum {
   RU,
   RZ;
 
-    companion object {
-        fun fromValue(value: Int): X86AvxRoundingMode
-    }
+  companion object {
+    fun fromValue(value: Int): X86AvxRoundingMode
+  }
 }

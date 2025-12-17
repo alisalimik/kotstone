@@ -15,9 +15,9 @@ actual enum class X86SseConditionCode(override val value: UInt) : INumericEnum {
   NLE(X86_SSE_CC_NLE),
   ORD(X86_SSE_CC_ORD);
 
-    actual companion object {
-        actual fun fromValue(value: Int): X86SseConditionCode {
-            return entries.firstOrNull { it.value == value.toUInt() } ?: INVALID
-        }
+  actual companion object {
+    actual fun fromValue(value: Int): X86SseConditionCode {
+      return entries.firstOrNull { it.value == value.toUInt() } ?: INVALID
     }
+  }
 }

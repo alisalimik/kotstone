@@ -70,9 +70,9 @@ actual enum class X86AvxConditionCode(override val value: UInt) : INumericEnum {
   GT_OQ(X86_AVX_CC_GT_OQ),
   TRUE_US(X86_AVX_CC_TRUE_US);
 
-    actual companion object {
-        actual fun fromValue(value: Int): X86AvxConditionCode {
-            return entries.firstOrNull { it.value == value.toUInt() } ?: INVALID
-        }
+  actual companion object {
+    actual fun fromValue(value: Int): X86AvxConditionCode {
+      return entries.firstOrNull { it.value == value.toUInt() } ?: INVALID
     }
+  }
 }

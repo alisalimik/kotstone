@@ -16,9 +16,9 @@ actual enum class X86AvxBroadcast(override val value: Int) : INumericEnum {
   BCAST_8(X86_AVX_BCAST_8),
   BCAST_16(X86_AVX_BCAST_16);
 
-    actual companion object {
-        actual fun fromValue(value: Int): X86AvxBroadcast {
-            return entries.firstOrNull { it.value == value } ?: BCAST_INVALID
-        }
+  actual companion object {
+    actual fun fromValue(value: Int): X86AvxBroadcast {
+      return entries.firstOrNull { it.value == value } ?: BCAST_INVALID
     }
+  }
 }
