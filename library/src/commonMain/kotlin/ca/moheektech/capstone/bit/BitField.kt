@@ -1,4 +1,4 @@
-package ca.moheektech.core.templates.bit
+package ca.moheektech.capstone.bit
 
 /**
  * A type-safe bit field implementation for efficient flag operations.

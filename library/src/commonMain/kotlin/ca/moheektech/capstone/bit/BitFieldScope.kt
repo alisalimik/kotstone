@@ -1,7 +1,5 @@
 package ca.moheektech.capstone.bit
 
-import ca.moheektech.core.templates.bit.BitField
-
 @BitFieldDsl
 class BitFieldScope<T : Enum<T>> {
     private var bitField = BitField<T>()

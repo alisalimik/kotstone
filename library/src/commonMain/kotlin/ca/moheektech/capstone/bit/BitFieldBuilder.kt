@@ -1,7 +1,5 @@
 package ca.moheektech.capstone.bit
 
-import ca.moheektech.core.templates.bit.BitField
-
 /**
  * Builder class for constructing BitFields fluently.
  */

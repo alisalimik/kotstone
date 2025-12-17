@@ -1,7 +1,5 @@
 package ca.moheektech.capstone.bit
 
-import ca.moheektech.core.templates.bit.BitField
-
 /**
  * Interface for enum classes that want to work seamlessly with BitField.
  * Implementing this interface provides additional convenience methods.
