@@ -540,7 +540,7 @@ internal class JnaCapstoneBinding(
         add(
             X86Operand(
                 type = type,
-                access = AccessType.fromValue(op.access.toInt()),
+                access = AccessType.fromValue(op.access),
                 size = op.size.toInt(),
                 reg = reg,
                 imm = imm,

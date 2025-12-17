@@ -1,9 +1,12 @@
 package ca.moheektech.capstone.bit
 
+import ca.moheektech.capstone.internal.ExportedApi
+
 /**
  * Interface for enum classes that want to work seamlessly with BitField. Implementing this
  * interface provides additional convenience methods.
  */
+@ExportedApi
 interface BitFieldEnum<T : Enum<T>> {
   /**
    * Converts a raw value back to an enum instance.

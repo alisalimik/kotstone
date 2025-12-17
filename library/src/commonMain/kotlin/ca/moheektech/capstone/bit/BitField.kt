@@ -1,5 +1,6 @@
 package ca.moheektech.capstone.bit
 
+import ca.moheektech.capstone.internal.ExportedApi
 import kotlin.jvm.JvmInline
 
 /**
@@ -49,6 +50,7 @@ import kotlin.jvm.JvmInline
  *
  * @param T The enum type representing individual flags
  */
+@ExportedApi
 @JvmInline
 value class BitField<T>(internal val value: ULong = 0UL) where T : Enum<T> {
 
