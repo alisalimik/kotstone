@@ -107,6 +107,7 @@ fun Project.registerCapstoneBuildTasks() {
         // JVM shared libraries
         "macosX64Shared",
         "macosArm64Shared",
+        "linuxX86Shared",
         "linuxX64Shared",
         "linuxArm64Shared",
         "linuxArm32Shared",
@@ -129,7 +130,7 @@ fun Project.registerCapstoneBuildTasks() {
         if (targetName.startsWith("android")) {
             androidBuildTaskNames.add(taskName)
         }
-        tasks.register(taskName, external.tasks.BuildCapstoneTask::class.java).configure {
+        tasks.register(taskName, BuildCapstoneTask::class.java).configure {
             group = "capstone"
             description = "Build Capstone shared library for $targetName"
             this.targetName = targetName
@@ -175,19 +176,19 @@ fun Project.registerCapstoneBuildTasks() {
             if (targetName != null) {
                 val buildTaskName = "buildCapstone${targetName.capitalize()}"
                 dependsOn(buildTaskName)
-                logger.info("✓ Configured $name to depend on $buildTaskName")
+                logger.info("✓ Configured cinterop: $name to depend on $buildTaskName")
             }
         }
     }
 
     // Make Kotlin native compilation tasks depend on corresponding Capstone build tasks
     tasks.configureEach {
-        if (name.startsWith("compileKotlin") && !name.contains("Metadata")) {
+        if (name.contains("compileWasm")) {
             val targetName = extractTargetFromCompileTaskName(name)
             if (targetName != null) {
                 val buildTaskName = "buildCapstone${targetName.capitalize()}"
                 dependsOn(buildTaskName)
-                logger.info("✓ Configured $name to depend on $buildTaskName")
+                logger.info("✓ Configured compile wasm: $name to depend on $buildTaskName")
             }
         }
     }
@@ -217,6 +218,15 @@ fun Project.registerCapstoneBuildTasks() {
                 dependsOn(buildTaskName)
                 logger.info("✓ Configured jvmTest to depend on $buildTaskName")
             }
+        }
+
+        if (name == "jvmJar") {
+            sharedLibraryTargets.take(8).forEach { targetName ->
+                val buildTaskName = "buildCapstone${targetName.capitalize()}"
+                dependsOn(buildTaskName)
+                logger.info("✓ Configured jvmMain to depend on $buildTaskName")
+            }
+
         }
     }
 }
