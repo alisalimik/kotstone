@@ -167,6 +167,13 @@ fun Project.registerCapstoneBuildTasks() {
             dependsOn("buildCapstoneAndroid")
             logger.info("Configured preBuild to depend on buildCapstoneAndroid")
         }
+
+        // Make Android merge JNI tasks depend on Android Capstone libraries
+        if (name.contains("mergeJniLibFolders", ignoreCase = true) ||
+            name.contains("mergeNativeLibs", ignoreCase = true)) {
+            dependsOn("buildCapstoneAndroid")
+            logger.info("✓ Configured $name to depend on buildCapstoneAndroid")
+        }
     }
 
     // Make cinterop tasks depend on corresponding Capstone build tasks
@@ -217,6 +224,15 @@ fun Project.registerCapstoneBuildTasks() {
                 val buildTaskName = "buildCapstone${targetName.capitalize()}"
                 dependsOn(buildTaskName)
                 logger.info("✓ Configured jvmTest to depend on $buildTaskName")
+            }
+        }
+
+        // Make jvmProcessResources depend on JVM shared libraries
+        if (name == "jvmProcessResources") {
+            sharedLibraryTargets.take(8).forEach { targetName ->
+                val buildTaskName = "buildCapstone${targetName.capitalize()}"
+                dependsOn(buildTaskName)
+                logger.info("✓ Configured jvmProcessResources to depend on $buildTaskName")
             }
         }
 
