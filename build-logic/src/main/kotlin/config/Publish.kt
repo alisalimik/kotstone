@@ -3,15 +3,23 @@ package config
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import external.CapstoneBuildConfigs
 import org.gradle.api.Project
+import org.gradle.api.attributes.Bundling
+import org.gradle.api.attributes.LibraryElements
+import org.gradle.api.attributes.Usage
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import org.gradle.nativeplatform.MachineArchitecture
+import org.gradle.nativeplatform.OperatingSystemFamily
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSoftwareComponentWithCoordinatesAndPublication
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import java.io.File
@@ -80,64 +88,130 @@ fun Project.configurePublishing() {
             isReproducibleFileOrder = true
         }
 
-        // Create platform-specific JVM artifacts with classifiers
-        createPlatformSpecificJars()
-
         // Configure npm publishing tasks
         configureNpmPublishing()
     }
 }
 
-/**
- * Creates platform-specific JAR artifacts for JVM native libraries
- * These are published with Maven classifiers so consumers can download only the libraries they need
- *
- * The classifier format matches CapstoneBuildConfigs.getJvmPlatformClassifier()
- *
- * Directory structure:
- *   Build output: library/src/jvmMain/resources/libs/{classifier}/
- *   JAR content:  libs/{classifier}/
- *   Classifier:   {classifier} (e.g., "capstone-macos-x64")
- */
-private fun Project.createPlatformSpecificJars() {
-    // Get all JVM shared library targets from CapstoneBuildConfigs
-    val jvmSharedTargets = CapstoneBuildConfigs.getAllJvmSharedTargets()
-
-    jvmSharedTargets.forEach { targetName ->
-        val classifier = CapstoneBuildConfigs.getJvmPlatformClassifier(targetName)
-
-        if (classifier != null) {
-            val taskName = "jvmJar${classifier.replace("-", "").replaceFirstChar { it.uppercase() }}"
-
-            // Create a JAR task for each platform
-            val jarTask = tasks.register<Jar>(taskName) {
-                archiveClassifier.set(classifier)
-
-                // Include native library from resources
-                // Path matches CapstoneBuild.kt output directory
-                from(File(projectDir, "library/src/jvmMain/resources/libs/$classifier")) {
-                    into("libs/$classifier")
-                    include("**/*")
-                }
-
-                // Optionally include JVM classes if needed (currently disabled)
-                // from(tasks.named("compileKotlinJvm"))
-            }
-
-            // Register the JAR with Maven publishing
-            afterEvaluate {
-                extensions.configure<PublishingExtension> {
-                    publications {
-                        // Create or update the JVM publication to include platform-specific JARs
-                        if (findByName("jvm") is MavenPublication) {
-                            (findByName("jvm") as MavenPublication).artifact(jarTask)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+///**
+// * Creates platform-specific JAR artifacts for JVM native libraries
+// * These are published as variants so Gradle consumers can automatically pick the right one.
+// */
+//context(project: Project)
+//internal fun KotlinMultiplatformExtension.createPlatformSpecificJars() {
+//    // Get all JVM shared library targets from CapstoneBuildConfigs
+//    val jvmSharedTargets = CapstoneBuildConfigs.getAllJvmSharedTargets()
+//
+//    // Exclude native libraries from the main JVM JAR
+//    project.tasks.named<Jar>("jvmJar") {
+//        exclude("libs/**")
+//    }
+//
+//    publishing.adhocSoftwareComponent {
+//        jvmSharedTargets.forEach { targetName ->
+//            val classifier =
+//                CapstoneBuildConfigs.getJvmPlatformClassifier(targetName) ?: return@forEach
+//
+//            // Define attributes for this target
+//            val (osFamily, arch) = getOsAndArchAttributes(targetName)
+//
+//            val taskName =
+//                "jvmJar${classifier.replace("-", "").replaceFirstChar { it.uppercase() }}"
+//            val configName =
+//                "jvmVariant${classifier.replace("-", "").replaceFirstChar { it.uppercase() }}"
+//
+//            // 1. Create a JAR task for this platform
+//            val jarTask = project.tasks.register<Jar>(taskName) {
+//                archiveClassifier.set(classifier)
+//                // Include native library from resources
+//                from(File(project.projectDir, "src/jvmMain/resources/libs/$classifier")) {
+//                    into("libs/$classifier")
+//                    include("**/*")
+//                }
+//            }
+//
+//            // 2. Create an outgoing configuration for this variant
+//            val variantConfig = project.configurations.create(configName) {
+//                isCanBeResolved = true
+//                isCanBeConsumed = true
+//
+//
+//                // Set attributes so Gradle knows when to use this variant
+//                attributes {
+//                    attribute(
+//                        OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, project.objects.named(
+//                            OperatingSystemFamily::class.java, osFamily
+//                        )
+//                    )
+//                    attribute(
+//                        MachineArchitecture.ARCHITECTURE_ATTRIBUTE, project.objects.named(
+//                            MachineArchitecture::class.java, arch
+//                        )
+//                    )
+//                    // Standard JVM attributes to match the consumer's request
+//                    attribute(
+//                        Usage.USAGE_ATTRIBUTE,
+//                        project.objects.named(Usage::class.java, Usage.JAVA_RUNTIME)
+//                    )
+//                    attribute(
+//                        LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+//                        project.objects.named(LibraryElements::class.java, LibraryElements.JAR)
+//                    )
+//                    attribute(
+//                        Bundling.BUNDLING_ATTRIBUTE,
+//                        project.objects.named(Bundling::class.java, Bundling.EXTERNAL)
+//                    )
+//
+//                }
+//
+//                // Add the JAR artifact
+//                outgoing.artifact(jarTask)
+//            }
+//
+//            // 3. Register this configuration as a variant of the 'java' component
+//            addVariantsFromConfiguration(variantConfig) {
+//                mapToMavenScope("runtime")
+//            }
+//            // 4. Also publish as a classifier (legacy Maven support) using the old method
+//            // This ensures Maven users can still manually pick the classifier
+//            project.afterEvaluate {
+//                extensions.configure<PublishingExtension> {
+//                    publications {
+//                        if (findByName("jvm") is MavenPublication) {
+//                            (findByName("jvm") as MavenPublication).artifact(jarTask)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//@Suppress("UnstableApiUsage")
+//private fun getOsAndArchAttributes(targetName: String): Pair<String, String> {
+//    fun getArch(): String {
+//        return when {
+//            targetName.contains("Arm64") -> MachineArchitecture.ARM64
+//            targetName.contains("x86") -> MachineArchitecture.X86
+//            targetName.contains("x64") -> MachineArchitecture.X86_64
+//            else -> "arm"
+//        }
+//    }
+//    return when {
+//        targetName.contains("macos", ignoreCase = true) -> {
+//            OperatingSystemFamily.MACOS
+//        }
+//
+//        targetName.contains("linux", ignoreCase = true)  -> {
+//            OperatingSystemFamily.LINUX
+//        }
+//
+//        targetName.contains("mingw", ignoreCase = true) ->  {
+//            OperatingSystemFamily.WINDOWS
+//        }
+//        else -> "unknown"
+//    } to getArch()
+//}
 
 /**
  * Configures npm publishing tasks for publishing to npm registry and GitHub Packages

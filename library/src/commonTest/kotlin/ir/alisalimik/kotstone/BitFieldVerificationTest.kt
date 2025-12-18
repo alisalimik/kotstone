@@ -1,0 +1,38 @@
+package ir.alisalimik.kotstone
+
+import ir.alisalimik.kotstone.api.CapstoneEngine
+import ir.alisalimik.kotstone.api.initializeCapstone
+import ir.alisalimik.kotstone.enums.Architecture
+import ir.alisalimik.kotstone.enums.Mode
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlinx.coroutines.test.runTest
+
+class BitFieldVerificationTest {
+
+  @Test
+  fun testX86EFlagsBitField() = runTest {
+    initializeCapstone()
+
+    // ADD EAX, 1 (0x83, 0xC0, 0x01)
+    // Modifies: OF, SF, ZF, AF, PF, CF
+    val code = byteArrayOf(0x83.toByte(), 0xC0.toByte(), 0x01)
+
+    CapstoneEngine.build(Architecture.X86, Mode.MODE_32) { detail = true }
+        .use { cs ->
+          val result = cs.disassemble(code)
+          val insns = result.getOrThrow()
+
+          assertEquals(1, insns.size)
+          val insn = insns[0]
+
+          assertTrue(insn is X86Instruction, "Instruction should be X86Instruction")
+
+          val eflags = insn.x86.eflags
+
+          // Verify types
+          println("EFlags: ${eflags.toHexString()}")
+        }
+  }
+}

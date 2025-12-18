@@ -2,7 +2,6 @@ package external
 
 import external.tasks.BuildAllCapstoneTask
 import external.tasks.BuildCapstoneTask
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -167,37 +166,66 @@ fun Project.registerCapstoneBuildTasks() {
         }
 
         // Make cinterop tasks depend on corresponding Capstone build tasks
-        tasks.matching { it.name.contains("cinterop", ignoreCase = true) }.configureEach(object : Action<Task> {
-            override fun execute(cinteropTask: Task) {
-                val targetName = extractTargetFromCinteropTaskName(cinteropTask.name)
-                logger.lifecycle("Processing cinterop task: ${cinteropTask.name}, extracted target: $targetName")
-                if (targetName != null) {
-                    val buildTaskName = "buildCapstone${targetName.capitalize()}"
-                    val capstoneBuildTask = tasks.findByName(buildTaskName)
-                    logger.lifecycle("Looking for build task: $buildTaskName, found: ${capstoneBuildTask != null}")
-                    if (capstoneBuildTask != null) {
-                        cinteropTask.dependsOn(capstoneBuildTask)
-                        logger.lifecycle("✓ Configured ${cinteropTask.name} to depend on $buildTaskName")
-                    } else {
-                        logger.warn("⚠ Could not find build task $buildTaskName for cinterop task ${cinteropTask.name}")
-                    }
+        tasks.matching { it.name.contains("cinterop", ignoreCase = true) }.configureEach {
+            val targetName = extractTargetFromCinteropTaskName(name)
+            logger.lifecycle("Processing cinterop task: $name, extracted target: $targetName")
+            if (targetName != null) {
+                val buildTaskName = "buildCapstone${targetName.capitalize()}"
+                val capstoneBuildTask = tasks.findByName(buildTaskName)
+                logger.lifecycle("Looking for build task: $buildTaskName, found: ${capstoneBuildTask != null}")
+                if (capstoneBuildTask != null) {
+                    dependsOn(capstoneBuildTask)
+                    logger.lifecycle("✓ Configured $name to depend on $buildTaskName")
+                } else {
+                    logger.warn("⚠ Could not find build task $buildTaskName for cinterop task $name")
                 }
             }
-        })
+        }
 
         // Make Kotlin native compilation tasks depend on corresponding Capstone build tasks
-        tasks.matching { it.name.startsWith("compileKotlin") && !it.name.contains("Metadata") }.configureEach(object : Action<Task> {
-            override fun execute(compileTask: Task) {
-                val targetName = extractTargetFromCompileTaskName(compileTask.name)
-                if (targetName != null) {
-                    val capstoneBuildTask = tasks.findByName("buildCapstone${targetName.capitalize()}")
-                    if (capstoneBuildTask != null) {
-                        compileTask.dependsOn(capstoneBuildTask)
-                        logger.lifecycle("✓ Configured ${compileTask.name} to depend on buildCapstone${targetName.capitalize()}")
-                    }
+        tasks.matching { it.name.startsWith("compileKotlin") && !it.name.contains("Metadata") }.configureEach {
+            val targetName = extractTargetFromCompileTaskName(name)
+            if (targetName != null) {
+                val capstoneBuildTask = tasks.findByName("buildCapstone${targetName.capitalize()}")
+                if (capstoneBuildTask != null) {
+                    dependsOn(capstoneBuildTask)
+                    logger.lifecycle("✓ Configured $name to depend on buildCapstone${targetName.capitalize()}")
                 }
             }
-        })
+        }
+
+        // Make jvmTest depend on the appropriate shared library build task for the current host
+        tasks.findByName("jvmTest")?.let { jvmTestTask ->
+            val arch = System.getProperty("os.arch").lowercase()
+            val isArm64 = arch.contains("arm64") || arch.contains("aarch64")
+            val isArm32 = arch.contains("arm") || arch.startsWith("aarch") // simplistic check, but usually 'arm' covers 32-bit
+            val isX64 = arch.contains("x86_64") || arch.contains("amd64")
+            val isX86 = arch.contains("x86") || arch.contains("i386") || arch.contains("i686")
+            
+            val targetName = when {
+                platform.Host.isMac && isArm64 -> "macosArm64Shared"
+                platform.Host.isMac -> "macosX64Shared"
+                platform.Host.isLinux && isArm64 -> "linuxArm64Shared"
+                platform.Host.isLinux && isX64 -> "linuxX64Shared"
+                platform.Host.isLinux && isArm32 -> "linuxArm32Shared"
+                platform.Host.isLinux -> "linuxX86Shared" // Default fallback for linux if not others? Or maybe specific for x86
+                platform.Host.isWindows && isX64 -> "mingwX64Shared"
+                platform.Host.isWindows -> "mingwX86Shared"
+                else -> null
+            }
+
+            if (targetName != null) {
+                val buildTaskName = "buildCapstone${targetName.capitalize()}"
+                val buildTask = tasks.findByName(buildTaskName)
+                if (buildTask != null) {
+                    jvmTestTask.dependsOn(buildTask)
+                    logger.lifecycle("✓ Configured jvmTest to depend on $buildTaskName")
+                } else {
+                    // Only warn if we are on a platform that should have this target
+                    logger.info("Could not find build task $buildTaskName for jvmTest on this host")
+                }
+            }
+        }
     }
 }
 

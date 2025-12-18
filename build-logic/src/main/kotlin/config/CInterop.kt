@@ -13,11 +13,9 @@ fun KotlinMultiplatformExtension.createCInterop() {
     for (target in nativeTargets) {
         target.compilations.getByName("main") {
             cinterops.create("capstone") {
-                definitionFile.set {
-                    projectDir.file("interop/capstone.def").asFile
-                }
-                includeDirs(project.file("interop/capstone/include"))
-                extraOpts("-libraryPath", project.file("interop/lib/${target.targetName}"))
+                definitionFile.set(projectDir.file("interop/capstone.def"))
+                includeDirs(projectDir.file("interop/capstone/include").asFile)
+                extraOpts("-libraryPath", projectDir.file("interop/lib/${target.targetName}").asFile.absolutePath)
             }
         }
     }

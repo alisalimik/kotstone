@@ -54,7 +54,7 @@ Add to your `pom.xml`:
 ```xml
 
 <dependency>
-    <groupId>ir.alisalimik.kapstone</groupId>
+    <groupId>ir.alisalimik.kotstone</groupId>
     <artifactId>kapstone</artifactId>
     <version>1.0.0-alpha01</version>
 </dependency>

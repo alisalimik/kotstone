@@ -2,6 +2,7 @@
   <dictionary name="project">
     <words>
       <w>bcast</w>
+      <w>kotstone</w>
       <w>libcapstone</w>
       <w>libkapstone</w>
       <w>wasi</w>

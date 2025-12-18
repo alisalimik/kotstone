@@ -1,10 +1,12 @@
 package config
 
+import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.konan.target.Family
 
+context(project: Project)
 fun KotlinMultiplatformExtension.configureSourceSets() {
     applyDefaultHierarchyTemplate {
         common {

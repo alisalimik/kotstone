@@ -53,6 +53,9 @@ fun Project.patchCinteropConfigCache() {
     tasks.withType<KotlinNativeCompile>()
         .named { it.endsWith("MainKotlinMetadata") }
         .configureEach { notCompatibleWithConfigurationCache("Workaround for KT-76147") }
+
+    tasks.matching { it.name.contains("commonizeCInterop") }
+        .configureEach { notCompatibleWithConfigurationCache("Workaround for configuration cache issue in Dokka/Commonizer") }
 }
 
 fun Project.patchTestTask() {

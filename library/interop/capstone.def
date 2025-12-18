@@ -1,4 +1,4 @@
-package = ir.alisalimik.kapstone.internal
+package = ir.alisalimik.kotstone.internal
 headers = platform.h windowsce/stdint.h windowsce/intrin.h capstone/capstone.h capstone/wasm.h capstone/arm.h capstone/x86.h capstone/aarch64.h
 headerFilter = capstone/*
 

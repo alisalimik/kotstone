@@ -1,0 +1,32 @@
+package ir.alisalimik.kotstone.exp.aarch64
+
+import ir.alisalimik.kotstone.exp.INumericEnum
+import ir.alisalimik.kotstone.internal.*
+
+@ExportedApi
+actual enum class AArch64SvePredPattern(override val value: Int) : INumericEnum {
+
+  // generated content <AArch64GenCSSystemOperandsEnum.inc:GET_ENUM_VALUES_SVEPREDPAT> begin
+  // clang-format off
+  ALL(AARCH64_SVEPREDPAT_ALL),
+  MUL3(AARCH64_SVEPREDPAT_MUL3),
+  MUL4(AARCH64_SVEPREDPAT_MUL4),
+  POW2(AARCH64_SVEPREDPAT_POW2),
+  VL1(AARCH64_SVEPREDPAT_VL1),
+  VL128(AARCH64_SVEPREDPAT_VL128),
+  VL16(AARCH64_SVEPREDPAT_VL16),
+  VL2(AARCH64_SVEPREDPAT_VL2),
+  VL256(AARCH64_SVEPREDPAT_VL256),
+  VL3(AARCH64_SVEPREDPAT_VL3),
+  VL32(AARCH64_SVEPREDPAT_VL32),
+  VL4(AARCH64_SVEPREDPAT_VL4),
+  VL5(AARCH64_SVEPREDPAT_VL5),
+  VL6(AARCH64_SVEPREDPAT_VL6),
+  VL64(AARCH64_SVEPREDPAT_VL64),
+  VL7(AARCH64_SVEPREDPAT_VL7),
+  VL8(AARCH64_SVEPREDPAT_VL8),
+
+  // clang-format on
+  // generated content <AArch64GenCSSystemOperandsEnum.inc:GET_ENUM_VALUES_SVEPREDPAT> end
+  ENDING(AARCH64_SVEPREDPAT_ENDING),
+}
