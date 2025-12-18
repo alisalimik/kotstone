@@ -528,13 +528,13 @@ jobs:
             ${{ runner.os }}-konan-
 
       - name: Run JS tests
-        run: ./gradlew jsTest --continue --stacktrace
+        run: ./gradlew jsNodeTest --continue --stacktrace
 
       - name: Run WASM JS tests
-        run: ./gradlew wasmJsTest --continue --stacktrace
+        run: ./gradlew wasmJsNodeTest --continue --stacktrace
 
       - name: Run WASM WASI tests
-        run: ./gradlew wasmWasiTest --continue --stacktrace
+        run: ./gradlew wasmWasiNodeTest --continue --stacktrace
 
       - name: Upload test reports
         if: always()
@@ -577,10 +577,11 @@ jobs:
           echo "=== Installing Android SDK components ==="
           echo "y" | sdkmanager "platform-tools"
           echo "y" | sdkmanager "build-tools;34.0.0"
-          echo "y" | sdkmanager "platforms;android-34"
+          echo "y" | sdkmanager "build-tools;34.0.0"
+          echo "y" | sdkmanager "platforms;android-29"
           echo "y" | sdkmanager "ndk;29.0.14206865"
           echo "y" | sdkmanager "cmake;3.22.1"
-          echo "y" | sdkmanager "system-images;android-34;google_apis;x86_64"
+          echo "y" | sdkmanager "system-images;android-29;default;x86_64"
 
       - name: Set Android environment variables
         run: |
@@ -708,43 +709,17 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: AVD cache
-        uses: actions/cache@v5
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-34-x86_64-4gb
-
-      - name: create and cache AVD
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          arch: x86_64
-          target: google_apis
-          force-avd-creation: false
-          emulator-boot-timeout: 900
-          disk-size: 4096M
-          heap-size: 512M
-          ram-size: 2048M
-          cores: 2
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-load
-          disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
-
       - name: Run Android device tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 29
           arch: x86_64
-          target: google_apis
+          target: default
           force-avd-creation: false
-          emulator-boot-timeout: 900
-          disk-size: 4096M
-          heap-size: 512M
-          ram-size: 2048M
+          emulator-boot-timeout: 600
+          disk-size: 2048M
+          heap-size: 256M
+          ram-size: 1024M
           cores: 2
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
           disable-animations: true
