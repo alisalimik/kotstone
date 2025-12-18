@@ -1,178 +1,113 @@
 # Kapstone
 
-Kapstone is a powerful Kotlin Multiplatform binding for the [Capstone](https://www.capstone-engine.org/) disassembly framework. It brings the comprehensive capabilities of Capstone to the Kotlin ecosystem, enabling binary analysis and disassembly on JVM, Android, Native (macOS, Linux, Windows), and the Web (JS, Wasm).
+[![Build](https://github.com/alisalimik/kotstone/actions/workflows/build.yml/badge.svg)](https://github.com/alisalimik/kotstone/actions/workflows/build.yml)
+[![Test](https://github.com/alisalimik/kotstone/actions/workflows/test.yml/badge.svg)](https://github.com/alisalimik/kotstone/actions/workflows/test.yml)
 
-## ⚠️ Beta Notice
-
-**This project is currently in BETA.**
-
-Please be aware that the APIs are currently evolving and are subject to change without strict deprecation cycles. The library is currently lightly tested across all targets. While we strive for stability, we recommend thorough testing if you plan to use this in production environments.
-
-## Features
-
--   **Multiplatform Support**: Seamlessly run on JVM, Android, macOS (Apple Silicon & Intel), Linux, Windows (MinGW), and Web (JS & Wasm).
--   **Idiomatic Kotlin API**: Enhances the raw C API with Kotlin's type safety, `Result` types, and resource management (`use` blocks).
--   **Comprehensive Architecture Support**: Supports all major architectures provided by Capstone (ARM, ARM64, X86, MIPS, PowerPC, etc.).
+**Kotstone** is a lightweight, efficient Kotlin Multiplatform binding for the [Capstone](https://www.capstone-engine.org/) disassembly engine. It provides a type-safe, idiomatic API for disassembling binary code across JVM, Android, iOS, macOS, Linux, Windows, and Web (JS/Wasm).
 
 ## Installation
 
-### npm / JavaScript / TypeScript
-
-For JavaScript and TypeScript projects, install via npm:
-
-```bash
-npm install @kapstone/kapstone-kt
-```
-
-Or from GitHub Packages:
-
-```bash
-npm install @kapstone/kapstone-kt --registry=https://npm.pkg.github.com
-```
-
-```typescript
-import * as Capstone from '@kapstone/kapstone-kt';
-
-// Use the library
-const cs = Capstone.cs_open(/* ... */);
-```
-
-### Gradle (Kotlin/JVM/Android)
-
-Add to your `build.gradle.kts`:
-
+### Gradle (Kotlin/Groovy)
 ```kotlin
-dependencies {
-    implementation("ca.moheektech.kapstone:kapstone:1.0.0-alpha01")
-}
+implementation("ca.moheektech:kapstone:1.0.0-alpha01")
 ```
+> **Note**: Resolves platform-specific native libraries automatically via Gradle variant matching.
 
-### Maven (Java)
-
-Add to your `pom.xml`:
-
+### Maven
 ```xml
-
 <dependency>
-    <groupId>ir.alisalimik.kotstone</groupId>
-    <artifactId>kapstone</artifactId>
+    <groupId>ca.moheektech</groupId>
+    <artifactId>kapstone-jvm</artifactId>
     <version>1.0.0-alpha01</version>
 </dependency>
 ```
 
-## Building from Source
-
-If you want to build the library from source or contribute to development:
-
-### Prerequisites
-
--   JDK 17 or higher.
--   CMake and a C compiler (GCC/Clang) for building the native shared libraries.
--   Android NDK (optional, for Android targets).
--   Emscripten (optional, for Web/Wasm targets).
--   Xcode (macOS only, for building XCFrameworks).
-
-### Build Commands
-
-To build the library and all its underlying native dependencies, run:
-
-```bash
-./gradlew buildCapstoneAll
+### CocoaPods
+```ruby
+pod 'Kotstone'
 ```
 
-This task will compile the Kotlin code and also trigger the build of the embedded Capstone C library for all enabled targets on your host machine.
-
-### Building XCFrameworks (macOS only)
-
-For Apple platform distribution, you can build a unified XCFramework containing all Apple platforms:
-
-```bash
-# Build unified XCFramework (iOS, macOS, watchOS, tvOS)
-./gradlew :library:assembleXCFramework
+### Swift Package Manager
+```swift
+dependencies: [
+    .package(url: "https://github.com/alisalimik/kotstone.git", from: "1.0.0-alpha01")
+]
 ```
 
-This creates a single `CapstoneKtKit.xcframework` file that works on all Apple devices and simulators.
+## Requirements
+- **Kotlin**: 2.3.0+
+- **Java (JVM)**: JDK 17+
+- **Targets**: Android 5.0+, Linux (x64/Arm64), Windows (x64), macOS 12+, iOS 14+, tvOS 14+, watchOS 7+.
 
-See [XCFRAMEWORK.md](XCFRAMEWORK.md) for detailed documentation on building and using XCFrameworks.
+## API Usage
 
-## Usage
-
-Kapstone provides a high-level, safe API around the Capstone engine.
-
-### Basic Disassembly
-
-Here is a simple example of how to initialize the engine and disassemble some machine code:
-
+### Kotlin Multiplatform
 ```kotlin
-import ca.moheektech.capstone.api.CapstoneEngine
-import ca.moheektech.capstone.enums.Architecture
-import ca.moheektech.capstone.enums.Mode
+import ir.alisalimik.kotstone.api.CapstoneEngine
+import ir.alisalimik.kotstone.enums.Architecture
+import ir.alisalimik.kotstone.enums.Mode
 
-fun main() {
-    // 1. Initialize the engine (ARM64, Little Endian)
-    // The 'use' block ensures the engine is closed and resources are freed automatically.
-    CapstoneEngine.build(Architecture.ARM64, Mode.LITTLE_ENDIAN) {
-        detail = true // Enable detailed instruction analysis (operands, groups, etc.)
-    }.use { engine ->
-        
-        // 2. Prepare code to disassemble (e.g., MOV X0, #1)
-        val code = byteArrayOf(0x20, 0x00, 0x80, 0xd2.toByte())
-        val address = 0x1000L
+// Automatic resource management
+CapstoneEngine.build(Architecture.ARM64, Mode.LITTLE_ENDIAN).use { engine ->
+    val code = byteArrayOf(0x09, 0x00, 0x38.toByte(), 0xd5.toByte()) // "ret"
+    
+    engine.disassemble(code, address = 0x1000).onSuccess { instructions ->
+        instructions.forEach { println("0x${it.address.toString(16)}: ${it.mnemonic} ${it.opStr}") }
+    }.onFailure {
+        println("Disassembly failed: ${it.message}")
+    }
+}
+```
 
-        // 3. Disassemble
-        engine.disassemble(code, address).onSuccess { instructions ->
-            println("Disassembled ${instructions.size} instructions:")
-            instructions.forEach { insn ->
-                println("0x${insn.address.toString(16)}: ${insn.mnemonic} ${insn.opStr}")
-            }
-        }.onFailure { error ->
-            println("Failed to disassemble: $error")
+### Java
+```java
+import ir.alisalimik.kotstone.api.CapstoneEngine;
+import ir.alisalimik.kotstone.enums.Architecture;
+import ir.alisalimik.kotstone.enums.Mode;
+
+try (CapstoneEngine engine = CapstoneEngine.build(Architecture.X86, Mode.MODE_64)) {
+    byte[] code = {0x55, 0x48, (byte)0x8b, 0x05, (byte)0xb8, 0x13, 0x00, 0x00};
+    
+    var result = engine.disassemble(code, 0x1000, 0);
+    if (result.isSuccess()) {
+        for (Instruction insn : result.getOrThrow()) {
+            System.out.printf("0x%x: %s %s%n", insn.getAddress(), insn.getMnemonic(), insn.getOpStr());
         }
     }
 }
 ```
 
-### Advanced Configuration
-
-You can configure various options like syntax style (Intel/AT&T) or skip-data mode using the builder:
-
-```kotlin
-val engine = CapstoneEngine.build(Architecture.X86, Mode.MODE_64) {
-    syntax = ca.moheektech.capstone.enums.Syntax.INTEL
-    detail = true
-    skipData = true
+> **Compiler Error?** If you encounter "Experimental API usage" errors, add this free compiler arg:  
+```
+compilerOptions {
+    freeCompilerArgs.add("-Xcontext-parameters")
+    freeCompilerArgs.add("-Xexpect-actual-classes")
+    freeCompilerArgs.add("-Xreturn-value-checker=check")
 }
 ```
 
-## 🌐 Wasm & Web Artifacts
+## Build from Source
 
-Kapstone supports running in the browser and Node.js via Kotlin/Wasm and Kotlin/JS. However, because the library relies on an underlying C implementation compiled to WebAssembly, there are specific deployment requirements.
+### Prerequisites
+- **JDK 17+**
+- **Android SDK platform 36 & NDK r29**
+- **macOS Machine** (for Apple targets/cross-compilation)
+- **Toolchains**:
+    - **Zig** (for Linux cross-compilation from macOS)
+    - **Mingw-w64** (for Windows cross-compilation)
 
-### Important: Publishing Web Artifacts
+### Build Commands
+```bash
+# Build all targets native lib
+./gradlew buildCapstoneAll
 
-When you build your application for the web, the standard Kotlin build tasks might not automatically place the required C-level artifacts in your distribution folder.
+#build kotlin library
+./gradlew build
+```
 
-**You must manually ensure the following files are copied to your final web distribution directory:**
+## Contributing
+Contributions are welcome! I specifically need help verifying and testing on more architectures (Linux ARM32/MIPS/etc.) and improving the Windows build chain.
 
-1.  **Wrapper**: The JavaScript glue code generated by Emscripten (often named `capstone.js` or similar, depending on build).
-2.  **Wasm Implementation**: The compiled WebAssembly binary (`capstone.wasm`).
-
-These files are typically generated in the build output of the `wasmJs` or `wasmWasi` targets (e.g., inside `library/build/` or resources folders). Without these files accessible at runtime, the library will fail to initialize.
-
-## Publishing
-
-Kapstone uses **npm Trusted Publishing** with OIDC for secure, token-free publishing.
-
-**For Maintainers**:
-- **Quick Start**: [QUICK_PUBLISH.md](QUICK_PUBLISH.md) - TL;DR publishing guide
-- **Complete Guide**: [NPM_TRUSTED_PUBLISHING.md](NPM_TRUSTED_PUBLISHING.md) - Detailed setup and troubleshooting
-- **Reference**: [PUBLISHING.md](PUBLISHING.md) - Publishing documentation
-
-**Key Features**:
-- 🔒 No npm tokens stored in GitHub
-- ✅ Cryptographic provenance on every publish
-- 🏷️ Automatic dist-tag management (alpha/beta/rc/latest)
-
----
-
-*Kapstone - Disassembly for the Kotlin Era.*
+## License
+Distributed under the **APACHE-2.0** license.  
+Bundles **Capstone Engine** which is available under the **BSD 3-Clause** license.
