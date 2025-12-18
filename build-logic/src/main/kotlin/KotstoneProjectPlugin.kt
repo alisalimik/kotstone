@@ -1,6 +1,7 @@
 import config.configureArgs
 import config.configureCompatibility
 import config.configureDetekt
+import config.configureDokka
 import config.configureProjectMeta
 import config.configurePublishing
 import config.configureSourceSets
@@ -48,8 +49,8 @@ class KotstoneProjectPlugin : Plugin<Project> {
             patchTestTask()
             patchWASITestRunner()
             patchEs2015()
+            configureDokka()
             configurePublishing()
-
             registerCapstoneBuildTasks()
         }
     }

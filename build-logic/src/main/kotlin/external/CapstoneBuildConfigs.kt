@@ -657,4 +657,35 @@ object CapstoneBuildConfigs {
             )
         )
     }
+    /**
+     * Calculates the output directory for the given target.
+     * This is used to set the @OutputDirectory for the Gradle task.
+     */
+    fun getOutputDir(project: Project, targetName: String): File {
+        val projectDir = project.rootProject.projectDir
+        
+        // WASM targets
+        if (targetName == "wasmWasi") {
+            return File(projectDir, "library/src/wasmWasiMain/resources")
+        }
+        if (targetName == "wasmJs") {
+            return File(projectDir, "library/src/webMain/resources")
+        }
+
+        // Native targets
+        val configs = getConfigs(project)
+        val config = configs[targetName] ?: return File(projectDir, "library/interop/lib/$targetName") // Fallback
+        
+        return when {
+            config.buildShared && getAndroidAbi(targetName) != null -> {
+                val abi = getAndroidAbi(targetName)!!
+                File(projectDir, "library/interop/linked-android/$abi")
+            }
+            config.buildShared && getJvmPlatformClassifier(targetName) != null -> {
+                val classifier = getJvmPlatformClassifier(targetName)!!
+                File(projectDir, "library/src/jvmMain/resources/libs/$classifier")
+            }
+            else -> File(projectDir, "library/interop/lib/$targetName")
+        }
+    }
 }

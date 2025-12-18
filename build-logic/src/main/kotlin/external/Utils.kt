@@ -79,8 +79,12 @@ fun Project.registerCapstoneBuildTasks() {
         task.llvmNmPath.set(this@registerCapstoneBuildTasks.toolchains.getLlvmNm())
         // Set androidNdkPath with convention (empty string if not found)
         task.androidNdkPath.convention(provider {
-            external.CapstoneBuildConfigs.getAndroidNdkPath(this@registerCapstoneBuildTasks) ?: ""
+            CapstoneBuildConfigs.getAndroidNdkPath(this@registerCapstoneBuildTasks) ?: ""
         })
+        task.capstoneSource.set(rootProject.layout.projectDirectory.dir("library/interop/capstone"))
+        task.outputDir.set(provider {
+            CapstoneBuildConfigs.getOutputDir(this@registerCapstoneBuildTasks, task.targetName)
+        }.get())
     }
 
     val nativeTargets = kotlin.targets.filterIsInstance<KotlinNativeTarget>()
@@ -155,52 +159,46 @@ fun Project.registerCapstoneBuildTasks() {
         dependsOn(androidBuildTaskNames)
     }
 
-    afterEvaluate {
-        // Make Android preBuild task depend on building all Android Capstone libraries
-        tasks.findByName("preBuild")?.let { preBuildTask ->
-            val buildCapstoneAndroidTask = tasks.findByName("buildCapstoneAndroid")
-            if (buildCapstoneAndroidTask != null) {
-                preBuildTask.dependsOn(buildCapstoneAndroidTask)
-                logger.lifecycle("Configured preBuild to depend on buildCapstoneAndroid")
-            }
+    // Make Android preBuild task depend on building all Android Capstone libraries
+    // Use configureEach to be lazy and robust against plugin application order
+    tasks.configureEach {
+        if (name == "preBuild") {
+            dependsOn("buildCapstoneAndroid")
+            logger.info("Configured preBuild to depend on buildCapstoneAndroid")
         }
+    }
 
-        // Make cinterop tasks depend on corresponding Capstone build tasks
-        tasks.matching { it.name.contains("cinterop", ignoreCase = true) }.configureEach {
+    // Make cinterop tasks depend on corresponding Capstone build tasks
+    tasks.configureEach {
+        if (name.contains("cinterop", ignoreCase = true)) {
             val targetName = extractTargetFromCinteropTaskName(name)
-            logger.lifecycle("Processing cinterop task: $name, extracted target: $targetName")
             if (targetName != null) {
                 val buildTaskName = "buildCapstone${targetName.capitalize()}"
-                val capstoneBuildTask = tasks.findByName(buildTaskName)
-                logger.lifecycle("Looking for build task: $buildTaskName, found: ${capstoneBuildTask != null}")
-                if (capstoneBuildTask != null) {
-                    dependsOn(capstoneBuildTask)
-                    logger.lifecycle("✓ Configured $name to depend on $buildTaskName")
-                } else {
-                    logger.warn("⚠ Could not find build task $buildTaskName for cinterop task $name")
-                }
+                dependsOn(buildTaskName)
+                logger.info("✓ Configured $name to depend on $buildTaskName")
             }
         }
+    }
 
-        // Make Kotlin native compilation tasks depend on corresponding Capstone build tasks
-        tasks.matching { it.name.startsWith("compileKotlin") && !it.name.contains("Metadata") }.configureEach {
+    // Make Kotlin native compilation tasks depend on corresponding Capstone build tasks
+    tasks.configureEach {
+        if (name.startsWith("compileKotlin") && !name.contains("Metadata")) {
             val targetName = extractTargetFromCompileTaskName(name)
             if (targetName != null) {
-                val capstoneBuildTask = tasks.findByName("buildCapstone${targetName.capitalize()}")
-                if (capstoneBuildTask != null) {
-                    dependsOn(capstoneBuildTask)
-                    logger.lifecycle("✓ Configured $name to depend on buildCapstone${targetName.capitalize()}")
-                }
+                val buildTaskName = "buildCapstone${targetName.capitalize()}"
+                dependsOn(buildTaskName)
+                logger.info("✓ Configured $name to depend on $buildTaskName")
             }
         }
+    }
 
-        // Make jvmTest depend on the appropriate shared library build task for the current host
-        tasks.findByName("jvmTest")?.let { jvmTestTask ->
+    // Make jvmTest depend on the appropriate shared library build task for the current host
+    tasks.configureEach {
+        if (name == "jvmTest") {
             val arch = System.getProperty("os.arch").lowercase()
             val isArm64 = arch.contains("arm64") || arch.contains("aarch64")
-            val isArm32 = arch.contains("arm") || arch.startsWith("aarch") // simplistic check, but usually 'arm' covers 32-bit
+            val isArm32 = arch.contains("arm") || arch.startsWith("aarch")
             val isX64 = arch.contains("x86_64") || arch.contains("amd64")
-            val isX86 = arch.contains("x86") || arch.contains("i386") || arch.contains("i686")
             
             val targetName = when {
                 platform.Host.isMac && isArm64 -> "macosArm64Shared"
@@ -208,7 +206,7 @@ fun Project.registerCapstoneBuildTasks() {
                 platform.Host.isLinux && isArm64 -> "linuxArm64Shared"
                 platform.Host.isLinux && isX64 -> "linuxX64Shared"
                 platform.Host.isLinux && isArm32 -> "linuxArm32Shared"
-                platform.Host.isLinux -> "linuxX86Shared" // Default fallback for linux if not others? Or maybe specific for x86
+                platform.Host.isLinux -> "linuxX86Shared"
                 platform.Host.isWindows && isX64 -> "mingwX64Shared"
                 platform.Host.isWindows -> "mingwX86Shared"
                 else -> null
@@ -216,14 +214,8 @@ fun Project.registerCapstoneBuildTasks() {
 
             if (targetName != null) {
                 val buildTaskName = "buildCapstone${targetName.capitalize()}"
-                val buildTask = tasks.findByName(buildTaskName)
-                if (buildTask != null) {
-                    jvmTestTask.dependsOn(buildTask)
-                    logger.lifecycle("✓ Configured jvmTest to depend on $buildTaskName")
-                } else {
-                    // Only warn if we are on a platform that should have this target
-                    logger.info("Could not find build task $buildTaskName for jvmTest on this host")
-                }
+                dependsOn(buildTaskName)
+                logger.info("✓ Configured jvmTest to depend on $buildTaskName")
             }
         }
     }

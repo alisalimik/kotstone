@@ -1,27 +1,13 @@
 package config
 
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
-import external.CapstoneBuildConfigs
 import org.gradle.api.Project
-import org.gradle.api.attributes.Bundling
-import org.gradle.api.attributes.LibraryElements
-import org.gradle.api.attributes.Usage
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
-import org.gradle.nativeplatform.MachineArchitecture
-import org.gradle.nativeplatform.OperatingSystemFamily
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSoftwareComponentWithCoordinatesAndPublication
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
@@ -38,6 +24,13 @@ fun getModuleName(): String {
     return publishProperties["POM_NAME"].toString().lowercase()
 }
 
+fun getGithubLink(): String {
+    return publishProperties["POM_SCM_URL"].toString()
+}
+
+fun getAuthor(): String {
+    return publishProperties["POM_DEVELOPER_NAME"].toString()
+}
 fun Project.configureProjectMeta() {
     group = publishProperties["GROUP"].toString()
     version = publishProperties["VERSION"].toString()
