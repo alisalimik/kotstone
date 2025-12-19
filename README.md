@@ -347,7 +347,7 @@ brew install zig
 ```
 
 ## Contributing
-Contributions are welcome! I specifically need help verifying and testing on more architectures (Linux ARM32/MIPS/etc.) and improving the Windows build chain.
+Contributions are welcome! I specifically need help verifying and testing on more architectures RISC-V/MIPS/etc.
 
 ## License
 Distributed under the **APACHE-2.0** license.  
