@@ -50,7 +50,7 @@ fun KotlinMultiplatformExtension.configureSourceSets() {
         wasmOptIns()
     }
 
-    val xcf = project.XCFramework("KapstoneKit")
+    val xcf = project.XCFramework("KotstoneKit")
     targets.filterIsInstance<KotlinNativeTarget>().forEach {
         it.configureCapstoneBinaries()
         if (it.konanTarget.family in appleFamilies) {

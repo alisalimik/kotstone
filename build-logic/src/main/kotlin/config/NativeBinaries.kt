@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkConfig
 fun KotlinNativeTarget.configureCapstoneBinaries() {
     binaries {
         val cfg: AbstractNativeLibrary.() -> Unit = {
-            baseName = "libkapstone"
+            baseName = "libkotstone"
             transitiveExport = false
         }
         sharedLib(configure = cfg)
@@ -20,7 +20,7 @@ fun KotlinNativeTarget.configureCapstoneBinaries() {
 
 fun KotlinNativeTarget.configureAppleFramework(xcf: XCFrameworkConfig) {
     binaries.framework {
-        baseName = "KapstoneKit"
+        baseName = "KotstoneKit"
         isStatic = true
         exportKdoc.set(true)
         transitiveExport = false

@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Kapstone",
+    name: "Kotstone",
     platforms: [
         .iOS(.v14),
         .macOS(.v12),
@@ -11,13 +11,13 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "KapstoneKit",
-            targets: ["KapstoneKit"]
+            name: "KotstoneKit",
+            targets: ["KotstoneKit"]
         )
     ],
     targets: [
         .binaryTarget(
-            name: "KapstoneKit",
+            name: "KotstoneKit",
             url: "<link to the uploaded XCFramework ZIP file>",
             checksum: "<checksum calculated for the ZIP file>"
         )

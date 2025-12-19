@@ -326,15 +326,24 @@ brew install zig
 
 ### Build Commands
 ```bash
-# Build all targets native lib
+# Build all targets native lib dependency for all targets
 ./gradlew buildCapstoneAll
 
-# Build Kotlin library
-./gradlew build
+# Build android/jvm library
+./gradlew assembleAndroidMain
+./gradlew jvmJar
 
-# Build specific target groups
-./gradlew buildCapstoneWasmJs buildCapstoneWasmWasi  # WASM targets (requires Emscripten)
-./gradlew buildCapstoneAll  # All native libraries (requires cross-toolchains)
+# build apple frameworks
+./gradlew assembleKotstoneKitReleaseXCFramework
+
+# Build web target groups
+./gradlew buildCapstoneWasmJs  # WASM js target
+./gradlew jsNodeProductionLibraryDistribution  # Typescript binding
+./gradlew wasmJsNodeProductionLibraryDistribution
+
+./gradlew buildCapstoneWasmWasi  # WASM WASI target
+./gradlew wasmWasiNodeProductionLibraryDistribution
+
 ```
 
 ## Contributing

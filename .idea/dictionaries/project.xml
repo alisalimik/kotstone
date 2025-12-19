@@ -5,6 +5,7 @@
       <w>kotstone</w>
       <w>libcapstone</w>
       <w>libkapstone</w>
+      <w>libkotstone</w>
       <w>wasi</w>
       <w>xcconfig</w>
       <w>xcframework</w>
