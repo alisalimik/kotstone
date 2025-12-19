@@ -178,10 +178,19 @@ fun Project.registerCapstoneBuildTasks() {
         }
 
         // Make Android merge JNI tasks depend on Android Capstone libraries
-        if (name.contains("mergeJniLibFolders", ignoreCase = true) ||
-            name.contains("mergeNativeLibs", ignoreCase = true)) {
-            dependsOn("buildCapstoneAndroid")
-            logger.info("✓ Configured $name to depend on buildCapstoneAndroid")
+        if (name == "mergeAndroidMainJniLibFolders" ||
+            name.contains("mergeJniLibFolders", ignoreCase = true) ||
+            name.contains("mergeNativeLibs", ignoreCase = true) ||
+            name.contains("AndroidJniLibs", ignoreCase = true)) {
+            // Explicitly depend on each Android shared library build task
+            val androidSharedTasks = listOf(
+                "buildCapstoneAndroidArm64Shared",
+                "buildCapstoneAndroidArm32Shared",
+                "buildCapstoneAndroidX64Shared",
+                "buildCapstoneAndroidX86Shared"
+            )
+            dependsOn(androidSharedTasks)
+            logger.info("✓ Configured $name to depend on Android Capstone build tasks")
         }
     }
 
