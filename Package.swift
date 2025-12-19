@@ -18,8 +18,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "KotstoneKit",
-            url: "<link to the uploaded XCFramework ZIP file>",
-            checksum: "<checksum calculated for the ZIP file>"
+            url: "https://github.com/alisalimik/kotstone/releases/download/v1.0.0-alpha01/KotstoneKit.xcframework.zip",
+            checksum: "e0dc9301ee0c45f4dd95b5fad64843c24e2e455b31d997975e3dd14997ec9d89"
         )
     ]
 )

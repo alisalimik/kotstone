@@ -8,7 +8,7 @@ Kotstone Kotlin Multiplatform Mobile library packaged as a framework for iOS, ma
   s.homepage         = 'https://github.com/alisalimik/kotstone'
   s.license          = { :type => 'Apache-2.0', :file => 'LICENSE' }
   s.author           = { 'Ali Salimi' => 'alisalimik2002@gmail.com' }
-  s.source           = { :http => '<URL-to-Kapstone.xcframework.zip>' }
+  s.source           = { :http => 'https://github.com/alisalimik/kotstone/releases/download/v1.0.0-alpha01/KotstoneKit.xcframework.zip' }
 
   # Vendored XCFramework
   s.vendored_frameworks = 'KotstoneKit.xcframework'
