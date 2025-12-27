@@ -82,10 +82,6 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: library/build/dokka/html
-      - name: Upload documentation artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: library/build/dokka/html
 
   deploy-docs:
     name: Deploy to GitHub Pages
